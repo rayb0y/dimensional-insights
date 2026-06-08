@@ -8,9 +8,9 @@ type Props = {
   onClick: () => void;
 };
 
-const PANEL_W = 520;
-const PANEL_H = 340;
-const Z_STEP = 44;
+const PANEL_W = 440;
+const PANEL_H = 440;
+const Z_STEP = 40;
 
 export function Panel({ layer, index, total, isActive, onClick }: Props) {
   // Distribute panels through depth, centered around z=0
