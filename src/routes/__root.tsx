@@ -77,19 +77,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Amal Ray — Product · Design · Technology" },
+      {
+        name: "description",
+        content:
+          "Portfolio of Amal Ray — consultant at the intersection of business, design and technology. CMU Master's in Integrated Innovation, formerly EY.",
+      },
+      { name: "author", content: "Amal Ray" },
+      { property: "og:title", content: "Amal Ray — Product · Design · Technology" },
+      {
+        property: "og:description",
+        content: "A layered cube portfolio. Scroll to turn it. Click any layer to read.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;700&display=swap",
       },
     ],
   }),
