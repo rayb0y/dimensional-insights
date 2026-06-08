@@ -55,12 +55,24 @@ export function Cube({ onOpen }: Props) {
     };
   }, []);
 
-  // active panel: snap to nearest layer; rotation goes 360 across all layers
   const degPerLayer = 360 / total;
   const activeIndex = ((Math.round(-rotation / degPerLayer) % total) + total) % total;
 
   return (
-    <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 flex items-center justify-center overflow-hidden">
+      {/* Yellow glow emanating from the centre of the cube */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{
+          width: 900,
+          height: 900,
+          background:
+            "radial-gradient(circle at center, rgba(255,204,51,0.45) 0%, rgba(255,204,51,0.18) 25%, rgba(255,204,51,0.05) 50%, rgba(255,204,51,0) 70%)",
+          filter: "blur(20px)",
+        }}
+      />
+
       <div style={{ perspective: "1400px", perspectiveOrigin: "50% 50%" }}>
         <div style={{ animation: "float-bob 6s ease-in-out infinite" }}>
           <div
@@ -87,7 +99,7 @@ export function Cube({ onOpen }: Props) {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 text-center text-[10px] uppercase tracking-[0.3em] text-text-muted">
+      <div className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 text-center font-serif text-[10px] uppercase tracking-[0.3em] text-text-muted">
         <div>
           {String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")} — {layers[activeIndex].label}
         </div>
