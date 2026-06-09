@@ -99,12 +99,8 @@ export function Cube({ onOpen }: Props) {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 text-center font-serif text-[10px] uppercase tracking-[0.3em] text-text-muted">
-        <div>
-          {String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")} — {layers[activeIndex].label}
-        </div>
-        <div className="mt-2 opacity-60">scroll · drag · arrow keys to turn</div>
-      </div>
+
+
     </div>
   );
 }
