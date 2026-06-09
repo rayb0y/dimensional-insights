@@ -4,17 +4,32 @@ import type { Layer } from "./data";
 
 type Props = {
   layer: Layer | null;
+  originRect: DOMRect | null;
   onClose: () => void;
 };
 
 const SIZE = 620;
 
-export function PanelOverlay({ layer, onClose }: Props) {
+export function PanelOverlay({ layer, originRect, onClose }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  // Compute initial transform from the origin rect to the centered target
+  const target = typeof window !== "undefined"
+    ? { cx: window.innerWidth / 2, cy: window.innerHeight / 2 }
+    : { cx: 0, cy: 0 };
+
+  const initial = originRect
+    ? {
+        x: originRect.left + originRect.width / 2 - target.cx,
+        y: originRect.top + originRect.height / 2 - target.cy,
+        scale: originRect.width / SIZE,
+        opacity: 1,
+      }
+    : { x: 0, y: 80, scale: 0.96, opacity: 0 };
 
   return (
     <AnimatePresence>
@@ -38,10 +53,11 @@ export function PanelOverlay({ layer, onClose }: Props) {
 
           <motion.div
             key={layer.id}
-            initial={{ y: 80, opacity: 0, scale: 0.96 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 60, opacity: 0, scale: 0.96 }}
-            transition={{ type: "spring", stiffness: 200, damping: 24 }}
+            initial={initial}
+            animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+            exit={initial}
+            transition={{ type: "spring", stiffness: 180, damping: 24 }}
+
             className="relative z-10 flex flex-col"
             style={{
               width: SIZE,
