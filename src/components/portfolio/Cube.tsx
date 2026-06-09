@@ -98,7 +98,7 @@ export function Cube({ onOpen }: Props) {
                 index={i}
                 total={total}
                 isActive={i === activeIndex}
-                onClick={() => onOpen(layer.id)}
+                onClick={(rect) => onOpen(layer.id, rect)}
               />
             ))}
           </div>
