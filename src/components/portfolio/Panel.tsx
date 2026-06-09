@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Layer } from "./data";
 
 type Props = {
@@ -6,7 +6,7 @@ type Props = {
   index: number;
   total: number;
   isActive: boolean;
-  onClick: () => void;
+  onClick: (rect: DOMRect) => void;
 };
 
 const PANEL_W = 440;
@@ -15,15 +15,20 @@ const Z_STEP = 40;
 
 export function Panel({ layer, index, total, isActive, onClick }: Props) {
   const [hover, setHover] = useState(false);
+  const ref = useRef<HTMLButtonElement>(null);
   const z = -((index - (total - 1) / 2) * Z_STEP);
 
   return (
     <button
+      ref={ref}
       type="button"
-      onClick={onClick}
+      onClick={() => {
+        if (ref.current) onClick(ref.current.getBoundingClientRect());
+      }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       className="group absolute left-1/2 top-1/2 text-left"
+
       style={{
         width: PANEL_W,
         height: PANEL_H,
