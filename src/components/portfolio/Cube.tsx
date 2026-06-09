@@ -3,8 +3,9 @@ import { layers } from "./data";
 import { Panel } from "./Panel";
 
 type Props = {
-  onOpen: (id: string) => void;
+  onOpen: (id: string, rect: DOMRect) => void;
 };
+
 
 export function Cube({ onOpen }: Props) {
   const targetRef = useRef(0);
