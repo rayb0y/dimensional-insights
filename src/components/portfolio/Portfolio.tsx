@@ -9,23 +9,32 @@ import { layers } from "./data";
 export function Portfolio() {
   const isMobile = useIsMobile();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [originRect, setOriginRect] = useState<DOMRect | null>(null);
 
   const activeLayer = activeId ? layers.find((l) => l.id === activeId) ?? null : null;
+
+  const handleOpen = (id: string, rect?: DOMRect) => {
+    setOriginRect(rect ?? null);
+    setActiveId(id);
+  };
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-void text-text-primary">
       <Grain />
 
       {isMobile ? (
-
         <div className="h-full overflow-y-auto">
-          <MobileStack onOpen={setActiveId} />
+          <MobileStack onOpen={(id) => handleOpen(id)} />
         </div>
       ) : (
-        <Cube onOpen={setActiveId} />
+        <Cube onOpen={(id, rect) => handleOpen(id, rect)} />
       )}
 
-      <PanelOverlay layer={activeLayer} onClose={() => setActiveId(null)} />
+      <PanelOverlay
+        layer={activeLayer}
+        originRect={originRect}
+        onClose={() => setActiveId(null)}
+      />
     </div>
   );
 }
