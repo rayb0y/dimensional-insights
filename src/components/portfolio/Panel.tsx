@@ -32,13 +32,17 @@ export function Panel({ layer, index, total, isActive, onClick }: Props) {
       style={{
         width: PANEL_W,
         height: PANEL_H,
-        transform: `translate(-50%, ${hover ? "-58%" : "-50%"}) translateZ(${z}px)`,
-        transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1)",
+        transform: hover
+          ? `translate(-50%, -72%) translateZ(${z + 20}px) scale(1.04)`
+          : `translate(-50%, -50%) translateZ(${z}px) scale(1)`,
+        transition: "transform 400ms cubic-bezier(0.22, 1, 0.36, 1)",
         background: "rgba(255,255,255,0.035)",
         border: "1px solid rgba(255,255,255,0.14)",
         backdropFilter: "blur(4px)",
         WebkitBackdropFilter: "blur(4px)",
-        boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
+        boxShadow: hover
+          ? "0 40px 80px rgba(0,0,0,0.7)"
+          : "0 24px 60px rgba(0,0,0,0.6)",
         willChange: "transform",
         animation: `shimmer-sweep 1.2s ease-out ${index * 0.08}s 1`,
       }}
