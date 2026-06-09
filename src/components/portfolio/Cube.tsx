@@ -23,19 +23,24 @@ export function Cube({ onOpen }: Props) {
 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      targetRef.current += e.deltaY * 0.25;
+      targetRef.current += (e.deltaY + e.deltaX) * 0.25;
     };
 
+    let touchX: number | null = null;
     let touchY: number | null = null;
     const onTouchStart = (e: TouchEvent) => {
+      touchX = e.touches[0].clientX;
       touchY = e.touches[0].clientY;
     };
     const onTouchMove = (e: TouchEvent) => {
-      if (touchY === null) return;
+      if (touchX === null || touchY === null) return;
+      const dx = touchX - e.touches[0].clientX;
       const dy = touchY - e.touches[0].clientY;
+      touchX = e.touches[0].clientX;
       touchY = e.touches[0].clientY;
-      targetRef.current += dy * 0.6;
+      targetRef.current += (dy + dx) * 0.6;
     };
+
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown" || e.key === "ArrowRight") targetRef.current += 30;
