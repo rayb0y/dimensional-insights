@@ -72,20 +72,8 @@ export function Panel({ layer, index, total, isActive, onClick }: Props) {
         )}
       </div>
 
-      {/* Floating tooltip with topic */}
-      <div
-        className="pointer-events-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1.5 font-serif text-[10px] uppercase tracking-[0.3em] text-text-primary"
-        style={{
-          top: -36,
-          opacity: hover ? 1 : 0,
-          transform: `translate(-50%, ${hover ? "0" : "6px"})`,
-          transition: "opacity 220ms ease, transform 220ms ease",
-          background: "rgba(10,10,16,0.92)",
-          border: "1px solid rgba(255,255,255,0.18)",
-        }}
-      >
-        {layer.label}
-      </div>
+
+
     </button>
   );
 }
