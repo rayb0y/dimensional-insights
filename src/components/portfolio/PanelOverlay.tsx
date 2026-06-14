@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import type { Layer } from "./data";
 
 type Props = {
@@ -8,19 +9,21 @@ type Props = {
   onClose: () => void;
 };
 
-const SIZE = 620;
+const SIZE = 660;
 
 export function PanelOverlay({ layer, originRect, onClose }: Props) {
+  const navigate = useNavigate();
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  // Compute initial transform from the origin rect to the centered target
-  const target = typeof window !== "undefined"
-    ? { cx: window.innerWidth / 2, cy: window.innerHeight / 2 }
-    : { cx: 0, cy: 0 };
+  const target =
+    typeof window !== "undefined"
+      ? { cx: window.innerWidth / 2, cy: window.innerHeight / 2 }
+      : { cx: 0, cy: 0 };
 
   const initial = originRect
     ? {
@@ -56,8 +59,7 @@ export function PanelOverlay({ layer, originRect, onClose }: Props) {
             initial={initial}
             animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
             exit={initial}
-            transition={{ type: "spring", stiffness: 180, damping: 24 }}
-
+            transition={{ type: "spring", stiffness: 180, damping: 22 }}
             className="relative z-10 flex flex-col"
             style={{
               width: SIZE,
@@ -66,66 +68,253 @@ export function PanelOverlay({ layer, originRect, onClose }: Props) {
               maxHeight: "92vh",
               background: "rgba(255,255,255,0.035)",
               border: "1px solid rgba(255,255,255,0.18)",
+              borderTop: `3px solid ${layer.accent}`,
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              boxShadow: "0 40px 120px rgba(0,0,0,0.7), 0 0 80px rgba(255,204,51,0.18)",
+              boxShadow:
+                "0 40px 120px rgba(0,0,0,0.7), 0 0 80px rgba(255,204,51,0.18)",
             }}
           >
             <div
-              className="flex items-center justify-between px-6 py-4"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+              className="flex items-center justify-between px-8 pt-6"
             >
-              <span className="font-serif text-[11px] uppercase tracking-[0.28em] text-text-primary">
-                {layer.label}
+              <span
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 500,
+                  fontSize: 11,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "rgba(240,237,232,0.5)",
+                }}
+              >
+                {layer.eyebrow}
               </span>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
                 className="text-text-muted transition-colors hover:text-text-primary"
+                style={{ fontSize: 22, lineHeight: 1, marginLeft: 12 }}
               >
                 ×
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-8 py-6">
-              <div className="text-[10px] uppercase tracking-[0.2em] text-text-muted">
-                {layer.eyebrow}
-              </div>
-              <h2 className="mt-3 font-serif text-3xl leading-tight text-text-primary">
+            <div className="flex-1 overflow-y-auto px-8 pb-7 pt-3">
+              <h2
+                style={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontWeight: 700,
+                  fontSize: 26,
+                  lineHeight: 1.15,
+                  letterSpacing: "-0.01em",
+                  color: "#f0ede8",
+                  marginTop: 12,
+                }}
+              >
                 {layer.title}
               </h2>
 
-              <div className="mt-5 space-y-3 whitespace-pre-line text-[14px] leading-relaxed text-text-primary/85">
-                {layer.description}
+              <div
+                style={{
+                  marginTop: 20,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 14,
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 300,
+                  fontSize: 15,
+                  lineHeight: 1.65,
+                  color: "rgba(240,237,232,0.88)",
+                }}
+              >
+                {layer.paragraphs.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
               </div>
 
-              {layer.films && (
-                <div className="mt-5 space-y-3 border-l border-white/15 pl-4">
-                  {layer.films.map((f) => (
-                    <div key={f.title}>
-                      <div className="font-serif text-base text-text-primary">{f.title}</div>
-                      <div className="text-sm text-text-muted">{f.blurb}</div>
-                    </div>
-                  ))}
+              {layer.awardLine && (
+                <div
+                  style={{
+                    marginTop: 16,
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 400,
+                    fontSize: 13,
+                    color: "rgba(240,237,232,0.6)",
+                  }}
+                >
+                  {layer.awardLine}
                 </div>
               )}
 
               {layer.insight && (
-                <div className="mt-6 border-l-2 border-white/30 pl-4 font-serif text-lg italic leading-snug text-text-primary/90">
-                  "{layer.insight}"
+                <div
+                  style={{
+                    marginTop: 24,
+                    borderLeft: `3px solid ${layer.accent}`,
+                    paddingLeft: 16,
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 400,
+                    fontSize: 15,
+                    fontStyle: "italic",
+                    lineHeight: 1.5,
+                    color: "rgba(240,237,232,0.9)",
+                  }}
+                >
+                  {layer.insight}
+                </div>
+              )}
+
+              {layer.variant === "lalama" && (
+                <div style={{ marginTop: 20 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      navigate({ to: "/context" });
+                    }}
+                    className="ghost-cta"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: "12px 24px",
+                      border: "1px solid rgba(150,224,64,0.5)",
+                      borderRadius: 8,
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      letterSpacing: "0.05em",
+                      color: "#f0ede8",
+                      background: "transparent",
+                      cursor: "pointer",
+                      transition: "border-color 0.2s, background 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "#96e040";
+                      e.currentTarget.style.background = "rgba(150,224,64,0.06)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(150,224,64,0.5)";
+                      e.currentTarget.style.background = "transparent";
+                    }}
+                  >
+                    Play CONTEXT →
+                  </button>
+                </div>
+              )}
+
+              {layer.watchUrl && (
+                <div style={{ marginTop: 20 }}>
+                  <a
+                    href={layer.watchUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: "12px 24px",
+                      border: "1px solid rgba(217,102,240,0.6)",
+                      borderRadius: 8,
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      letterSpacing: "0.05em",
+                      color: "#f0ede8",
+                      background: "transparent",
+                      textDecoration: "none",
+                      transition: "border-color 0.2s, background 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "#d966f0";
+                      e.currentTarget.style.background = "rgba(217,102,240,0.1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(217,102,240,0.6)";
+                      e.currentTarget.style.background = "transparent";
+                    }}
+                  >
+                    Watch Film →
+                  </a>
+                </div>
+              )}
+
+              {layer.variant === "contact" && (
+                <div
+                  style={{
+                    marginTop: 24,
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 12,
+                  }}
+                >
+                  {[
+                    { href: "mailto:amalr@andrew.cmu.edu", label: "amalr@andrew.cmu.edu" },
+                    {
+                      href: "https://www.linkedin.com/in/amal-ray-577a69175/",
+                      label: "LinkedIn",
+                    },
+                  ].map((l) => (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 10,
+                        padding: "12px 24px",
+                        border: "1px solid rgba(255,92,46,0.5)",
+                        borderRadius: 8,
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        letterSpacing: "0.03em",
+                        color: "#f0ede8",
+                        background: "transparent",
+                        textDecoration: "none",
+                        transition: "border-color 0.2s, background 0.2s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "#ff5c2e";
+                        e.currentTarget.style.background = "rgba(255,92,46,0.08)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "rgba(255,92,46,0.5)";
+                        e.currentTarget.style.background = "transparent";
+                      }}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
                 </div>
               )}
 
               {layer.tags.length > 0 && (
-                <div className="mt-6 flex flex-wrap gap-2">
+                <div
+                  style={{
+                    marginTop: 24,
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 8,
+                  }}
+                >
                   {layer.tags.map((t) => (
                     <span
                       key={t}
-                      className="px-2.5 py-1 text-[10px] tracking-wide text-text-muted"
                       style={{
-                        background: "rgba(255,255,255,0.04)",
-                        border: "1px solid rgba(255,255,255,0.12)",
+                        padding: "4px 10px",
+                        border: "1px solid rgba(255,255,255,0.15)",
+                        borderRadius: 4,
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 500,
+                        fontSize: 10,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: "rgba(240,237,232,0.6)",
                       }}
                     >
                       {t}

@@ -11,9 +11,9 @@ type Props = {
 
 const PANEL_W = 440;
 const PANEL_H = 440;
-const Z_STEP = 40;
+const Z_STEP = 36;
 
-export function Panel({ layer, index, total, isActive, onClick }: Props) {
+export function Panel({ layer, index, total, onClick }: Props) {
   const [hover, setHover] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
   const z = -((index - (total - 1) / 2) * Z_STEP);
@@ -28,14 +28,14 @@ export function Panel({ layer, index, total, isActive, onClick }: Props) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       className="group absolute left-1/2 top-1/2 text-left"
-
       style={{
         width: PANEL_W,
         height: PANEL_H,
-        transform: `translate(-50%, ${hover ? "-58%" : "-50%"}) translateZ(${z}px)`,
-        transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1)",
-        background: "rgba(255,255,255,0.035)",
+        transform: `translate(-50%, ${hover ? "-54%" : "-50%"}) translateZ(${z}px)`,
+        transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1), background 200ms ease",
+        background: hover ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
         border: "1px solid rgba(255,255,255,0.14)",
+        borderTop: `3px solid ${layer.accent}`,
         backdropFilter: "blur(4px)",
         WebkitBackdropFilter: "blur(4px)",
         boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
@@ -43,42 +43,102 @@ export function Panel({ layer, index, total, isActive, onClick }: Props) {
         animation: `shimmer-sweep 1.2s ease-out ${index * 0.08}s 1`,
       }}
     >
-      {/* Topic label always on top */}
+      {/* Top eyebrow with number */}
       <div
         className="pointer-events-none absolute left-0 right-0 top-0 flex items-center justify-between px-5 py-4"
         style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
       >
-        <span className="font-serif text-[11px] uppercase tracking-[0.28em] text-text-primary">
+        <span
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 500,
+            fontSize: 11,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: "rgba(240,237,232,0.5)",
+          }}
+        >
           {layer.label}
         </span>
-        <span className="text-[10px] tracking-[0.2em] text-text-muted">
+        <span
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 10,
+            letterSpacing: "0.2em",
+            color: "rgba(240,237,232,0.35)",
+          }}
+        >
           {String(index).padStart(2, "0")}
         </span>
       </div>
 
-      {/* Peek-up reveal: full title appears when hovering */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 px-5 py-5"
-        style={{
-          opacity: hover ? 1 : 0,
-          transform: hover ? "translateY(0)" : "translateY(8px)",
-          transition: "opacity 280ms ease, transform 280ms ease",
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0))",
-        }}
-      >
-        <div className="font-serif text-lg leading-tight text-text-primary">
-          {layer.title}
-        </div>
-        {layer.eyebrow && (
-          <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-text-muted line-clamp-1">
-            {layer.eyebrow}
+      {/* Intro variant: photo + name + tagline centred */}
+      {layer.variant === "intro" && (
+        <div
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center"
+        >
+          <div
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              border: "2px solid rgba(255,255,255,0.25)",
+              background: "rgba(255,255,255,0.06)",
+              overflow: "hidden",
+              marginBottom: 18,
+            }}
+          >
+            <img
+              src=""
+              alt="Amal Ray"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
           </div>
-        )}
-      </div>
+          <div
+            style={{
+              fontFamily: "'Syne', sans-serif",
+              fontWeight: 700,
+              fontSize: 22,
+              color: "#f0ede8",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Amal Ray
+          </div>
+          <div
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 300,
+              fontSize: 13,
+              lineHeight: 1.5,
+              color: "rgba(240,237,232,0.55)",
+              marginTop: 10,
+              maxWidth: 280,
+            }}
+          >
+            {layer.tagline}
+          </div>
+        </div>
+      )}
 
-
-
+      {/* Default variant: centred title in Syne */}
+      {layer.variant !== "intro" && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center">
+          <div
+            style={{
+              fontFamily: "'Syne', sans-serif",
+              fontWeight: 700,
+              fontSize: 28,
+              letterSpacing: "-0.01em",
+              color: "#f0ede8",
+              textTransform: "uppercase",
+              lineHeight: 1.1,
+            }}
+          >
+            {layer.label}
+          </div>
+        </div>
+      )}
     </button>
   );
 }
