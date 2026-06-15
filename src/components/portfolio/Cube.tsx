@@ -11,9 +11,7 @@ export function Cube({ onOpen }: Props) {
   const targetRef = useRef(0);
   const currentRef = useRef(0);
   const [rotation, setRotation] = useState(0);
-  const [cubeHover, setCubeHover] = useState(false);
   const total = layers.length;
-
 
   useEffect(() => {
     let raf = 0;
@@ -81,11 +79,7 @@ export function Cube({ onOpen }: Props) {
         }}
       />
 
-      <div
-        style={{ perspective: "1400px", perspectiveOrigin: "50% 50%" }}
-        onMouseEnter={() => setCubeHover(true)}
-        onMouseLeave={() => setCubeHover(false)}
-      >
+      <div style={{ perspective: "1400px", perspectiveOrigin: "50% 50%" }}>
         <div style={{ animation: "float-bob 6s ease-in-out infinite" }}>
           <div
             className="relative"
@@ -104,14 +98,12 @@ export function Cube({ onOpen }: Props) {
                 index={i}
                 total={total}
                 isActive={i === activeIndex}
-                cubeHover={cubeHover}
                 onClick={(rect) => onOpen(layer.id, rect)}
               />
             ))}
           </div>
         </div>
       </div>
-
 
 
 

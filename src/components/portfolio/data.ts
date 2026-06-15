@@ -66,18 +66,17 @@ export const layers: Layer[] = [
   {
     id: "lalama",
     accent: ACCENT.acid,
-    label: "Context",
+    label: "LaLaMa",
     eyebrow: "Independent  ·  Innovation  ·  2026",
     title: "What if you had to live inside the machine?",
     paragraphs: [
       "Most people use AI without understanding how it actually works — and that gap matters. When you don't know a language model has a finite context window, you don't know why it starts to drift. When you don't know it samples within its training distribution, you don't know why it can't help you reframe. The collaboration breaks down from misunderstanding the machine's architecture, not from failure.",
-      "Context is a game that teaches players how LLMs work by making them experience it. Players receive a token budget — their context window. They spend tokens to contribute narrative beats to a shared story. As tokens deplete, earlier parts of the story are forgotten. The story begins to drift and hallucinate, exactly as an LLM does at the edge of its context. Players don't read about AI. They feel what it's like to be one — and come away understanding the collaboration better.",
+      "LaLaMa is a game that teaches players how LLMs work by making them experience it. Players receive a token budget — their context window. They spend tokens to contribute narrative beats to a shared story. As tokens deplete, earlier parts of the story are forgotten. The story begins to drift and hallucinate, exactly as an LLM does at the edge of its context. Players don't read about AI. They feel what it's like to be one — and come away understanding the collaboration better.",
     ],
     insight: "You can't partner intelligently with something you don't understand from the inside.",
     tags: ["Human-AI Systems", "Innovation", "AI Literacy", "Conceptual"],
     variant: "lalama",
   },
-
   {
     id: "mool",
     accent: ACCENT.amber,
