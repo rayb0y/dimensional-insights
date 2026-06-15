@@ -31,14 +31,11 @@ export function Panel({ layer, index, total, onClick }: Props) {
       style={{
         width: PANEL_W,
         height: PANEL_H,
-        transform: `translate(-50%, ${hover ? "-54%" : "-50%"}) translateZ(${z}px)`,
+        transform: `translate(-50%, ${hover ? "-68%" : "-50%"}) translateZ(${z}px)`,
         transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1), background 200ms ease",
-        background: hover ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.14)",
-        borderTop: `3px solid ${layer.accent}`,
-        backdropFilter: "blur(4px)",
-        WebkitBackdropFilter: "blur(4px)",
-        boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
+        background: hover ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.015)",
+        border: "1px solid rgba(255,255,255,0.10)",
+        boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
         willChange: "transform",
         animation: `shimmer-sweep 1.2s ease-out ${index * 0.08}s 1`,
       }}
