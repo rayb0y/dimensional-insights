@@ -151,7 +151,7 @@ export function PanelOverlay({ layer, originRect, onClose }: Props) {
                 <div
                   style={{
                     marginTop: 24,
-                    borderLeft: `3px solid ${layer.accent}`,
+                    borderLeft: "3px solid rgba(255,255,255,0.4)",
                     paddingLeft: 16,
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 400,
