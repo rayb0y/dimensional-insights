@@ -68,7 +68,6 @@ export function PanelOverlay({ layer, originRect, onClose }: Props) {
               maxHeight: "92vh",
               background: "rgba(255,255,255,0.035)",
               border: "1px solid rgba(255,255,255,0.18)",
-              borderTop: `3px solid ${layer.accent}`,
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
               boxShadow:
