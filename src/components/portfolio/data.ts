@@ -66,7 +66,7 @@ export const layers: Layer[] = [
   {
     id: "lalama",
     accent: ACCENT.acid,
-    label: "Context",
+    label: "LaLaMa",
     eyebrow: "Independent  ·  Innovation  ·  2026",
     title: "What if you had to live inside the machine?",
     paragraphs: [
