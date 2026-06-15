@@ -118,24 +118,7 @@ export function Panel({ layer, index, total, onClick }: Props) {
         </div>
       )}
 
-      {/* Default variant: centred title in Syne */}
-      {layer.variant !== "intro" && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center">
-          <div
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontWeight: 700,
-              fontSize: 28,
-              letterSpacing: "-0.01em",
-              color: "#f0ede8",
-              textTransform: "uppercase",
-              lineHeight: 1.1,
-            }}
-          >
-            {layer.label}
-          </div>
-        </div>
-      )}
+      {/* Non-intro variants: no centred content (label shown in eyebrow only) */}
     </button>
   );
 }
