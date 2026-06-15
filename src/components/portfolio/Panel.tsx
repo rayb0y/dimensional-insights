@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import type { Layer } from "./data";
 
 type Props = {
@@ -6,17 +6,19 @@ type Props = {
   index: number;
   total: number;
   isActive: boolean;
+  cubeHover: boolean;
   onClick: (rect: DOMRect) => void;
 };
 
 const PANEL_W = 440;
 const PANEL_H = 440;
 const Z_STEP = 36;
+const PEEK_STEP = 22;
 
-export function Panel({ layer, index, total, onClick }: Props) {
-  const [hover, setHover] = useState(false);
+export function Panel({ layer, index, total, cubeHover, onClick }: Props) {
   const ref = useRef<HTMLButtonElement>(null);
   const z = -((index - (total - 1) / 2) * Z_STEP);
+  const peekY = cubeHover ? -(total - 1 - index) * PEEK_STEP : 0;
 
   return (
     <button
@@ -25,19 +27,16 @@ export function Panel({ layer, index, total, onClick }: Props) {
       onClick={() => {
         if (ref.current) onClick(ref.current.getBoundingClientRect());
       }}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       className="group absolute left-1/2 top-1/2 text-left"
       style={{
         width: PANEL_W,
         height: PANEL_H,
-        transform: `translate(-50%, ${hover ? "-54%" : "-50%"}) translateZ(${z}px)`,
-        transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1), background 200ms ease",
-        background: hover ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.14)",
-        borderTop: `3px solid ${layer.accent}`,
-        backdropFilter: "blur(4px)",
-        WebkitBackdropFilter: "blur(4px)",
+        transform: `translate(-50%, calc(-50% + ${peekY}px)) translateZ(${z}px)`,
+        transition: "transform 450ms cubic-bezier(0.22, 1, 0.36, 1), background 200ms ease",
+        background: "rgba(20,18,16,0.78)",
+        border: "1px solid rgba(255,255,255,0.18)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
         boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
         willChange: "transform",
         animation: `shimmer-sweep 1.2s ease-out ${index * 0.08}s 1`,
@@ -55,7 +54,7 @@ export function Panel({ layer, index, total, onClick }: Props) {
             fontSize: 11,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "rgba(240,237,232,0.5)",
+            color: "rgba(240,237,232,0.7)",
           }}
         >
           {layer.label}
@@ -65,14 +64,14 @@ export function Panel({ layer, index, total, onClick }: Props) {
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: 10,
             letterSpacing: "0.2em",
-            color: "rgba(240,237,232,0.35)",
+            color: "rgba(240,237,232,0.45)",
           }}
         >
           {String(index).padStart(2, "0")}
         </span>
       </div>
 
-      {/* Intro variant: photo + name + tagline centred */}
+      {/* Intro variant: photo + name + tagline centred (only the first card shows centre content) */}
       {layer.variant === "intro" && (
         <div
           className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center"
@@ -82,8 +81,8 @@ export function Panel({ layer, index, total, onClick }: Props) {
               width: 80,
               height: 80,
               borderRadius: "50%",
-              border: "2px solid rgba(255,255,255,0.25)",
-              background: "rgba(255,255,255,0.06)",
+              border: "2px solid rgba(255,255,255,0.3)",
+              background: "rgba(255,255,255,0.08)",
               overflow: "hidden",
               marginBottom: 18,
             }}
@@ -111,31 +110,12 @@ export function Panel({ layer, index, total, onClick }: Props) {
               fontWeight: 300,
               fontSize: 13,
               lineHeight: 1.5,
-              color: "rgba(240,237,232,0.55)",
+              color: "rgba(240,237,232,0.75)",
               marginTop: 10,
               maxWidth: 280,
             }}
           >
             {layer.tagline}
-          </div>
-        </div>
-      )}
-
-      {/* Default variant: centred title in Syne */}
-      {layer.variant !== "intro" && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center">
-          <div
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontWeight: 700,
-              fontSize: 28,
-              letterSpacing: "-0.01em",
-              color: "#f0ede8",
-              textTransform: "uppercase",
-              lineHeight: 1.1,
-            }}
-          >
-            {layer.label}
           </div>
         </div>
       )}
