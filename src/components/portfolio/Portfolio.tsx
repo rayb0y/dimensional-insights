@@ -11,8 +11,6 @@ export function Portfolio() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
 
-  const activeLayer = activeId ? layers.find((l) => l.id === activeId) ?? null : null;
-
   const handleOpen = (id: string, rect?: DOMRect) => {
     setOriginRect(rect ?? null);
     setActiveId(id);
@@ -31,9 +29,14 @@ export function Portfolio() {
       )}
 
       <PanelOverlay
-        layer={activeLayer}
+        layers={layers}
+        activeId={activeId}
         originRect={originRect}
-        onClose={() => setActiveId(null)}
+        onClose={() => {
+          setActiveId(null);
+          setOriginRect(null);
+        }}
+        onChange={(id) => setActiveId(id)}
       />
     </div>
   );
