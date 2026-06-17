@@ -1,67 +1,33 @@
-# Amal Ray Portfolio — Layered Cube
+## Panel (`src/components/portfolio/Panel.tsx`)
 
-A single-page, dark, cinematic portfolio. A floating stack of 11 translucent panels (a "cube") sits center-screen, rotates on Y as the user scrolls, and any panel can be clicked to fly forward and expand into a readable card.
+- Remove the colored top accent border (`borderTop: 3px solid ${layer.accent}`) — replace with the same 1px white/14 border as the rest.
+- Remove the intro variant's photo placeholder (the circular img block). Keep the name + tagline centered on layer 0 only.
+- For all layers *other than* the intro, remove the centered Syne title from the card face. The top-left label is the only visible text.
+- Make the top label more visible: increase color opacity (e.g. `rgba(240,237,232,0.85)`) and weight (600).
+- Hover peek: reduce the lift so just the top label clears the layer in front. Change `translateY(-54%)` to a smaller offset (~`calc(-50% - 22px)`) so only the eyebrow row peeks above the next panel.
 
-## Scope
+## PanelOverlay — Rolodex Navigation (`src/components/portfolio/PanelOverlay.tsx`)
 
-- Single page, no routing changes (use existing `src/routes/index.tsx`)
-- Mobile fallback: vertical stacked cards (no 3D)
-- No images yet — circular placeholder slot in the intro panel
-- Content for all 11 layers comes from the brief verbatim
+- Remove the colored `borderTop` accent from the overlay card and the colored `borderLeft` on the insight block (use neutral white/20).
+- Accept the full `layers` list + active `index` (or change props to `layerId`/`onChange(id)`). Add `onPrev` / `onNext` callbacks.
+- Wire arrow keys: `ArrowLeft`/`ArrowUp` → prev, `ArrowRight`/`ArrowDown` → next, `Escape` → close.
+- Add on-screen ◀ / ▶ buttons flanking the overlay card (fixed, vertically centered, outside the card). Disabled styling at first/last (or wrap around — wrap is more rolodex-like; **decision: wrap around**).
+- Animate card swap: use `motion.div` keyed by `layer.id` inside `AnimatePresence` with a quick slide+fade (incoming from +40px y, outgoing to -40px y) so it feels like a rolodex flip. Keep the existing origin-rect zoom only for the *first* open (when navigating, skip the rect math).
 
-## Tech & dependencies
+## Portfolio (`src/components/portfolio/Portfolio.tsx`)
 
-- React + TanStack Start (existing)
-- CSS 3D transforms (`perspective`, `preserve-3d`, `rotateY`, `translateZ`) for the cube
-- `framer-motion` (new dep) for fly-out / overlay transitions
-- Google Fonts: DM Serif Display + DM Sans, loaded via `<link>` in `src/routes/__root.tsx` head (NOT @import — per Tailwind v4 rules)
-- Design tokens added to `src/styles.css` under `@theme` and `:root`
+- Pass `layers` and `activeId` to `PanelOverlay`; provide `onPrev`/`onNext` that step `activeId` through the `layers` array with wrap-around.
+- Clear `originRect` after first mount so subsequent prev/next swaps animate cleanly without the zoom origin.
 
-## Files
+## CONTEXT game (`src/routes/context.tsx`)
 
-- `src/styles.css` — add palette tokens (`--void`, `--coral`, `--ice`, `--acid`, `--plasma`, `--amber`, `--text`, `--text-muted`), font family tokens, background = void black, grain helper, panel base styles, shimmer keyframes, float keyframes
-- `src/routes/__root.tsx` — add Google Fonts `<link>` tags (preconnect + DM Serif Display + DM Sans), update default `<title>` / meta to "Amal Ray — Product · Design · Technology"
-- `src/routes/index.tsx` — replace placeholder; render `<Portfolio />`
-- `src/components/portfolio/Portfolio.tsx` — page shell: nav, hero zone, scroll zone (10× vh), contact zone, grain overlay, active-panel state
-- `src/components/portfolio/Nav.tsx` — fixed top nav, blurs after scroll
-- `src/components/portfolio/Cube.tsx` — sticky-centered cube container; reads scroll progress via `useRef` + scroll listener; lerp-smoothed `rotateY` 0→360deg; float bob animation; renders 11 `<Panel />`s at staggered `translateZ`
-- `src/components/portfolio/Panel.tsx` — single layer; props: index, accent, label, content; resting state + hover brightening; click → expand
-- `src/components/portfolio/PanelOverlay.tsx` — Framer Motion overlay + expanded card with close button; spring (stiffness 180, damping 22)
-- `src/components/portfolio/data.ts` — array of 11 layer definitions (eyebrow, title, description, insight, tags, accent)
-- `src/components/portfolio/MobileStack.tsx` — vertical card list using same data, used below `md`
-- `src/components/portfolio/Grain.tsx` — fixed full-viewport SVG noise overlay
-- `src/hooks/useScrollProgress.ts` — returns 0–1 progress within a ref'd element, lerp-smoothed value via rAF
+Simplify:
+- Replace all "beat" terminology with "line" (UI copy + variable/type names: `BeatType` → `LineType` is optional; user-facing copy is what matters — rename labels: "Add beat" → "Add line", "FORGETTING — EACH BEAT COSTS A MEMORY" → "FORGETTING — EACH LINE COSTS A MEMORY", "Click a card to forget it" stays).
+- Remove the four line types (Introduction / Turn / Revelation / Loss). Every line is one kind, costs 1 token. Drop `BEAT_COLOURS`, `BEAT_COSTS`, `BEAT_ORDER`, the `selectedBeat` selector UI, the 1–4 keyboard shortcut effect, and the `type` field on cards.
+- `playBeat` (rename to `playLine`) always deducts 1 token. Cards render with neutral border (no per-type color).
+- Setup screen: remove copy referencing different beat types if any. Keep token selector, seed input.
+- Reflection / EndScreen: remove any per-type breakdowns; keep total lines played, memories forgotten.
 
-## Cube mechanics
+## Out of scope
 
-- Container: `perspective: 1200px`, inner cube `transform-style: preserve-3d`
-- Each panel: absolute, centered, `translateZ(-44px * index)`, base 520×340, radius 12, translucent white, 3px left border in accent, backdrop blur
-- Scroll zone is 10× viewport tall; cube container is `sticky top-0 h-screen` inside it
-- Scroll progress drives `rotateY`; lerp factor 0.08 via rAF loop
-- Active panel = `round(progress * 11) % 11`; passes `isActive` to the matching panel for the edge-glow pulse
-
-## Fly-out interaction
-
-- Click panel → set `activePanelId` in Portfolio
-- `PanelOverlay` renders via `AnimatePresence`: dark backdrop fades in, expanded card springs from center (initial scale 0.85, target 1) at ~680px wide
-- Close on backdrop click, × button, or Escape
-
-## Responsive
-
-- `useIsMobile` hook (already in `src/hooks/use-mobile.tsx`) gates `<Cube />` vs `<MobileStack />`
-- Tablet: scale cube to 0.8 via CSS clamp on width/height vars
-
-## Subtle details
-
-- Grain overlay (SVG `feTurbulence`), `mix-blend-mode: overlay`, opacity 0.03
-- Per-panel mount shimmer (one-time, staggered 80ms)
-- Cube floats ±12px on Y over 6s ease-in-out infinite
-- Scroll cue fades out after first scroll event
-
-## Out of scope (this pass)
-
-- Real photo (placeholder kept; user swaps `src` later)
-- Custom cursors, audio, analytics
-- Backend / Lovable Cloud (no data persistence needed)
-
-Ready to switch to build mode when you approve.
+No data, font, layout, or routing changes beyond above. No edits to `Cube.tsx`, `data.ts`, or `MobileStack.tsx`.

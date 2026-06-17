@@ -31,11 +31,10 @@ export function Panel({ layer, index, total, onClick }: Props) {
       style={{
         width: PANEL_W,
         height: PANEL_H,
-        transform: `translate(-50%, ${hover ? "-54%" : "-50%"}) translateZ(${z}px)`,
+        transform: `translate(-50%, calc(-50% - ${hover ? 22 : 0}px)) translateZ(${z}px)`,
         transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1), background 200ms ease",
         background: hover ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
         border: "1px solid rgba(255,255,255,0.14)",
-        borderTop: `3px solid ${layer.accent}`,
         backdropFilter: "blur(4px)",
         WebkitBackdropFilter: "blur(4px)",
         boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
@@ -43,7 +42,7 @@ export function Panel({ layer, index, total, onClick }: Props) {
         animation: `shimmer-sweep 1.2s ease-out ${index * 0.08}s 1`,
       }}
     >
-      {/* Top eyebrow with number */}
+      {/* Top label */}
       <div
         className="pointer-events-none absolute left-0 right-0 top-0 flex items-center justify-between px-5 py-4"
         style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
@@ -51,11 +50,11 @@ export function Panel({ layer, index, total, onClick }: Props) {
         <span
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 500,
-            fontSize: 11,
+            fontWeight: 600,
+            fontSize: 12,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "rgba(240,237,232,0.5)",
+            color: "rgba(240,237,232,0.9)",
           }}
         >
           {layer.label}
@@ -65,42 +64,24 @@ export function Panel({ layer, index, total, onClick }: Props) {
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: 10,
             letterSpacing: "0.2em",
-            color: "rgba(240,237,232,0.35)",
+            color: "rgba(240,237,232,0.45)",
           }}
         >
           {String(index).padStart(2, "0")}
         </span>
       </div>
 
-      {/* Intro variant: photo + name + tagline centred */}
+      {/* Intro variant only: name + tagline centred (no photo) */}
       {layer.variant === "intro" && (
-        <div
-          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center"
-        >
-          <div
-            style={{
-              width: 80,
-              height: 80,
-              borderRadius: "50%",
-              border: "2px solid rgba(255,255,255,0.25)",
-              background: "rgba(255,255,255,0.06)",
-              overflow: "hidden",
-              marginBottom: 18,
-            }}
-          >
-            <img
-              src=""
-              alt="Amal Ray"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </div>
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
           <div
             style={{
               fontFamily: "'Syne', sans-serif",
               fontWeight: 700,
-              fontSize: 22,
+              fontSize: 28,
               color: "#f0ede8",
               letterSpacing: "-0.01em",
+              textTransform: "uppercase",
             }}
           >
             Amal Ray
@@ -111,31 +92,12 @@ export function Panel({ layer, index, total, onClick }: Props) {
               fontWeight: 300,
               fontSize: 13,
               lineHeight: 1.5,
-              color: "rgba(240,237,232,0.55)",
-              marginTop: 10,
+              color: "rgba(240,237,232,0.6)",
+              marginTop: 14,
               maxWidth: 280,
             }}
           >
             {layer.tagline}
-          </div>
-        </div>
-      )}
-
-      {/* Default variant: centred title in Syne */}
-      {layer.variant !== "intro" && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center">
-          <div
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontWeight: 700,
-              fontSize: 28,
-              letterSpacing: "-0.01em",
-              color: "#f0ede8",
-              textTransform: "uppercase",
-              lineHeight: 1.1,
-            }}
-          >
-            {layer.label}
           </div>
         </div>
       )}

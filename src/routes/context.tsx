@@ -16,23 +16,8 @@ export const Route = createFileRoute("/context")({
   }),
 });
 
-type BeatType = "Introduction" | "Turn" | "Revelation" | "Loss";
-type Card = { id: string; type: BeatType; text: string; forgotten: boolean };
+type Card = { id: string; text: string; forgotten: boolean };
 type Phase = "setup" | "playing" | "forgetting" | "ended";
-
-const BEAT_COLOURS: Record<BeatType, string> = {
-  Introduction: "#96e040",
-  Turn: "#38b6ff",
-  Revelation: "#ffcc33",
-  Loss: "#ff5c2e",
-};
-const BEAT_COSTS: Record<BeatType, number> = {
-  Introduction: 1,
-  Turn: 2,
-  Revelation: 3,
-  Loss: 3,
-};
-const BEAT_ORDER: BeatType[] = ["Introduction", "Turn", "Revelation", "Loss"];
 
 const SEEDS = [
   "A cartographer discovers her maps are wrong.",
@@ -57,15 +42,11 @@ function ContextGame() {
   const [startingTokens, setStartingTokens] = useState(4);
   const [tokensRemaining, setTokensRemaining] = useState(4);
   const [cards, setCards] = useState<Card[]>([]);
-  const [forgettingBeats, setForgettingBeats] = useState(0);
-  const [selectedBeat, setSelectedBeat] = useState<BeatType>("Introduction");
-  const [beatText, setBeatText] = useState("");
-  const [reflection, setReflection] = useState<{ shape?: string; effect?: string }>(
-    {}
-  );
+  const [forgottenCount, setForgottenCount] = useState(0);
+  const [lineText, setLineText] = useState("");
+  const [reflection, setReflection] = useState<{ shape?: string; effect?: string }>({});
   const contextRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll right on new card
   useEffect(() => {
     if (contextRef.current) {
       contextRef.current.scrollTo({
@@ -75,62 +56,48 @@ function ContextGame() {
     }
   }, [cards.length]);
 
-  // Keyboard shortcuts 1-4 for beat type
-  useEffect(() => {
-    if (phase !== "playing") return;
-    const onKey = (e: KeyboardEvent) => {
-      const idx = parseInt(e.key, 10);
-      if (idx >= 1 && idx <= 4) setSelectedBeat(BEAT_ORDER[idx - 1]);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [phase]);
-
   const begin = () => {
     if (seed.trim().length < 5) return;
     setTokensRemaining(startingTokens);
     setCards([]);
-    setForgettingBeats(0);
+    setForgottenCount(0);
     setPhase("playing");
   };
 
   const reset = () => {
     setPhase("setup");
     setSeed("");
-    setBeatText("");
+    setLineText("");
     setCards([]);
-    setForgettingBeats(0);
+    setForgottenCount(0);
     setReflection({});
   };
 
-  const playBeat = () => {
-    const text = beatText.trim();
+  const playLine = () => {
+    const text = lineText.trim();
     if (!text) return;
-    const cost = BEAT_COSTS[selectedBeat];
     const inForgettingMode = tokensRemaining === 0;
-    if (!inForgettingMode && tokensRemaining < cost) return;
 
     const newCard: Card = {
       id: crypto.randomUUID(),
-      type: selectedBeat,
       text,
       forgotten: false,
     };
     setCards((c) => [...c, newCard]);
-    setBeatText("");
+    setLineText("");
 
     if (inForgettingMode) {
       setPhase("forgetting");
     } else {
-      setTokensRemaining((t) => t - cost);
+      setTokensRemaining((t) => t - 1);
     }
   };
 
   const forgetCard = (id: string) => {
     if (phase !== "forgetting") return;
     setCards((cs) => cs.map((c) => (c.id === id ? { ...c, forgotten: true } : c)));
-    const nextCount = forgettingBeats + 1;
-    setForgettingBeats(nextCount);
+    const nextCount = forgottenCount + 1;
+    setForgottenCount(nextCount);
     if (nextCount >= 3) setPhase("ended");
     else setPhase("playing");
   };
@@ -167,13 +134,7 @@ function ContextGame() {
           ← Back
         </Link>
 
-        <div
-          style={{
-            maxWidth: 560,
-            margin: "0 auto",
-            padding: "80px 24px 60px",
-          }}
-        >
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "80px 24px 60px" }}>
           <h1
             style={{
               fontFamily: "'Syne', sans-serif",
@@ -196,9 +157,9 @@ function ContextGame() {
               marginBottom: 32,
             }}
           >
-            You are a language model with a fixed context window. Spend tokens to add beats
-            to a story. When the tokens run out you keep playing — but every new beat now
-            costs a memory, and you choose what to forget.
+            You are a language model with a fixed context window. Spend one token per line
+            to add to a story. When the tokens run out you keep playing — but every new
+            line now costs a memory, and you choose what to forget.
           </p>
 
           <Divider />
@@ -214,7 +175,6 @@ function ContextGame() {
               width: "100%",
               border: "1px solid rgba(255,255,255,0.2)",
               background: "rgba(255,255,255,0.04)",
-              borderRadius: 8,
               padding: "14px 16px",
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 400,
@@ -237,14 +197,7 @@ function ContextGame() {
             {seed.length}/120
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 8,
-              marginTop: 12,
-            }}
-          >
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
             {SEEDS.map((s) => (
               <button
                 key={s}
@@ -255,19 +208,11 @@ function ContextGame() {
                   fontWeight: 400,
                   fontSize: 12,
                   border: "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: 20,
                   padding: "6px 14px",
                   background: "transparent",
                   color: "rgba(240,237,232,0.75)",
                   cursor: "pointer",
-                  transition: "border-color 0.2s",
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)")
-                }
               >
                 {s}
               </button>
@@ -284,7 +229,6 @@ function ContextGame() {
                 width: "100%",
                 border: "1px solid rgba(255,255,255,0.2)",
                 background: "rgba(255,255,255,0.04)",
-                borderRadius: 8,
                 padding: "10px 16px",
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: 14,
@@ -292,7 +236,7 @@ function ContextGame() {
                 outline: "none",
               }}
             >
-              {[4, 5, 6].map((n) => (
+              {[4, 5, 6, 8, 10].map((n) => (
                 <option key={n} value={n} style={{ background: "#07070f" }}>
                   {n}
                 </option>
@@ -309,7 +253,6 @@ function ContextGame() {
               style={{
                 width: "100%",
                 border: "1px solid rgba(255,255,255,0.3)",
-                borderRadius: 8,
                 padding: 14,
                 background: "transparent",
                 fontFamily: "'Syne', sans-serif",
@@ -319,17 +262,6 @@ function ContextGame() {
                 color: "#f0ede8",
                 cursor: seed.trim().length < 5 ? "not-allowed" : "pointer",
                 opacity: seed.trim().length < 5 ? 0.3 : 1,
-                transition: "border-color 0.2s, background 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                if (seed.trim().length >= 5) {
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
-                  e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
-                e.currentTarget.style.background = "transparent";
               }}
             >
               BEGIN
@@ -342,14 +274,16 @@ function ContextGame() {
 
   // ---- End screen ----
   if (phase === "ended") {
-    return <EndScreen
-      cards={cards}
-      tokensRemaining={tokensRemaining}
-      forgettingBeats={forgettingBeats}
-      reflection={reflection}
-      setReflection={setReflection}
-      onReset={reset}
-    />;
+    return (
+      <EndScreen
+        cards={cards}
+        tokensRemaining={tokensRemaining}
+        forgottenCount={forgottenCount}
+        reflection={reflection}
+        setReflection={setReflection}
+        onReset={reset}
+      />
+    );
   }
 
   // ---- Playing / forgetting ----
@@ -426,9 +360,7 @@ function ContextGame() {
             style={{
               width: 22,
               height: 22,
-              borderRadius: "50%",
-              background:
-                i < tokensRemaining ? "rgba(255,255,255,0.7)" : "transparent",
+              background: i < tokensRemaining ? "rgba(255,255,255,0.7)" : "transparent",
               border:
                 i < tokensRemaining
                   ? "1px solid rgba(255,255,255,0.7)"
@@ -455,7 +387,7 @@ function ContextGame() {
             animation: "ctx-pulse 1.2s ease-in-out infinite",
           }}
         >
-          FORGETTING — EACH BEAT COSTS A MEMORY
+          FORGETTING — EACH LINE COSTS A MEMORY
         </div>
       )}
 
@@ -488,7 +420,7 @@ function ContextGame() {
         }}
       >
         {/* Seed card */}
-        <div style={panelStyle("rgba(255,255,255,0.2)")}>
+        <div style={panelStyle()}>
           <div style={{ ...eyebrow, fontSize: 10 }}>Opening</div>
           <div
             style={{
@@ -503,41 +435,25 @@ function ContextGame() {
           </div>
         </div>
 
-        {cards.map((c) => {
+        {cards.map((c, i) => {
           const isForgetMode = phase === "forgetting" && !c.forgotten;
           return (
             <div
               key={c.id}
               onClick={() => forgetCard(c.id)}
               style={{
-                ...panelStyle(BEAT_COLOURS[c.type]),
+                ...panelStyle(),
                 cursor: isForgetMode ? "pointer" : "default",
                 opacity: c.forgotten ? 0.3 : 1,
                 textDecoration: c.forgotten ? "line-through" : "none",
                 pointerEvents: c.forgotten ? "none" : "auto",
-                borderTopColor: c.forgotten
-                  ? "rgba(255,255,255,0.1)"
-                  : BEAT_COLOURS[c.type],
                 border: isForgetMode
                   ? "1px dashed rgba(255,92,46,0.5)"
-                  : "1px solid rgba(255,255,255,0.12)",
-                borderTop: `3px solid ${
-                  c.forgotten ? "rgba(255,255,255,0.1)" : BEAT_COLOURS[c.type]
-                }`,
+                  : "1px solid rgba(255,255,255,0.18)",
                 transition: "opacity 0.4s ease",
               }}
             >
-              <div
-                style={{
-                  ...eyebrow,
-                  fontSize: 10,
-                  color: c.forgotten
-                    ? "rgba(240,237,232,0.3)"
-                    : BEAT_COLOURS[c.type],
-                }}
-              >
-                {c.type}
-              </div>
+              <div style={{ ...eyebrow, fontSize: 10 }}>Line {i + 1}</div>
               <div
                 style={{
                   marginTop: 10,
@@ -562,81 +478,22 @@ function ContextGame() {
           padding: "20px 40px",
         }}
       >
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-          {BEAT_ORDER.map((b, i) => {
-            const cost = BEAT_COSTS[b];
-            const colour = BEAT_COLOURS[b];
-            const selected = selectedBeat === b;
-            const disabled = !inForgettingMode && tokensRemaining < cost && tokensRemaining > 0;
-            return (
-              <button
-                key={b}
-                type="button"
-                onClick={() => setSelectedBeat(b)}
-                disabled={disabled}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  border: `1px solid ${colour}${selected ? "" : "59"}`,
-                  background: selected ? `${colour}14` : "transparent",
-                  borderRadius: 6,
-                  padding: "10px 16px",
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 500,
-                  fontSize: 12,
-                  color: "#f0ede8",
-                  cursor: disabled ? "not-allowed" : "pointer",
-                  opacity: disabled ? 0.3 : 1,
-                  transition: "background 0.2s, border-color 0.2s",
-                }}
-              >
-                <span>{b}</span>
-                <span style={{ display: "inline-flex", gap: 3 }}>
-                  {Array.from({ length: cost }).map((_, j) => (
-                    <span
-                      key={j}
-                      style={{
-                        width: 6,
-                        height: 6,
-                        borderRadius: "50%",
-                        background: colour,
-                      }}
-                    />
-                  ))}
-                </span>
-                <span
-                  style={{
-                    fontSize: 9,
-                    color: "rgba(240,237,232,0.35)",
-                    marginLeft: 4,
-                  }}
-                >
-                  {i + 1}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
         <textarea
-          value={beatText}
-          onChange={(e) => setBeatText(e.target.value)}
+          value={lineText}
+          onChange={(e) => setLineText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              playBeat();
+              playLine();
             }
           }}
-          placeholder="Write the next beat…"
+          placeholder="Write the next line…"
           maxLength={120}
           rows={1}
           style={{
             width: "100%",
-            marginTop: 12,
             border: "1px solid rgba(255,255,255,0.2)",
             background: "rgba(255,255,255,0.04)",
-            borderRadius: 8,
             padding: "12px 14px",
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: 14,
@@ -654,7 +511,7 @@ function ContextGame() {
             color: "rgba(240,237,232,0.4)",
           }}
         >
-          {beatText.length}/120
+          {lineText.length}/120
         </div>
 
         <div
@@ -666,12 +523,11 @@ function ContextGame() {
         >
           <button
             type="button"
-            onClick={playBeat}
-            disabled={phase === "forgetting" || !beatText.trim()}
+            onClick={playLine}
+            disabled={phase === "forgetting" || !lineText.trim()}
             style={{
-              border: `1px solid ${BEAT_COLOURS[selectedBeat]}`,
+              border: "1px solid rgba(255,255,255,0.4)",
               background: "transparent",
-              borderRadius: 8,
               padding: "10px 22px",
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 500,
@@ -679,10 +535,10 @@ function ContextGame() {
               letterSpacing: "0.04em",
               color: "#f0ede8",
               cursor: "pointer",
-              opacity: phase === "forgetting" || !beatText.trim() ? 0.4 : 1,
+              opacity: phase === "forgetting" || !lineText.trim() ? 0.4 : 1,
             }}
           >
-            Play beat
+            Add line
           </button>
           <button
             type="button"
@@ -690,7 +546,6 @@ function ContextGame() {
             style={{
               border: "1px solid rgba(255,255,255,0.2)",
               background: "transparent",
-              borderRadius: 8,
               padding: "10px 22px",
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 400,
@@ -712,14 +567,12 @@ function ContextGame() {
   );
 }
 
-function panelStyle(accent: string): React.CSSProperties {
+function panelStyle(): React.CSSProperties {
   return {
     background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.12)",
-    borderTop: `3px solid ${accent}`,
+    border: "1px solid rgba(255,255,255,0.18)",
     backdropFilter: "blur(4px)",
     WebkitBackdropFilter: "blur(4px)",
-    borderRadius: 12,
     padding: "16px 20px",
     minWidth: 220,
     maxWidth: 280,
@@ -742,19 +595,18 @@ function Divider() {
 function EndScreen({
   cards,
   tokensRemaining,
-  forgettingBeats,
+  forgottenCount,
   reflection,
   setReflection,
   onReset,
 }: {
   cards: Card[];
   tokensRemaining: number;
-  forgettingBeats: number;
+  forgottenCount: number;
   reflection: { shape?: string; effect?: string };
   setReflection: (r: { shape?: string; effect?: string }) => void;
   onReset: () => void;
 }) {
-  // Build narrative: collapse runs of forgotten into one gap marker
   const narrative = useMemo(() => {
     const out: { kind: "text" | "gap"; value: string; id: string }[] = [];
     let inGap = false;
@@ -882,8 +734,8 @@ function EndScreen({
               paddingTop: 24,
             }}
           >
-            <Stat label="Beats Played" value={cards.length} />
-            <Stat label="Cards Forgotten" value={forgettingBeats} />
+            <Stat label="Lines Played" value={cards.length} />
+            <Stat label="Cards Forgotten" value={forgottenCount} />
             <Stat label="Tokens Unspent" value={tokensRemaining} />
           </div>
         </div>
@@ -896,7 +748,6 @@ function EndScreen({
               width: "100%",
               maxWidth: 320,
               border: "1px solid rgba(255,255,255,0.3)",
-              borderRadius: 8,
               padding: 14,
               background: "transparent",
               fontFamily: "'Syne', sans-serif",
@@ -905,15 +756,6 @@ function EndScreen({
               letterSpacing: "0.1em",
               color: "#f0ede8",
               cursor: "pointer",
-              transition: "border-color 0.2s, background 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
-              e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
-              e.currentTarget.style.background = "transparent";
             }}
           >
             PLAY AGAIN
@@ -945,7 +787,6 @@ function PillRow({
             style={{
               border: `1px solid ${isSel ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.15)"}`,
               background: isSel ? "rgba(255,255,255,0.06)" : "transparent",
-              borderRadius: 20,
               padding: "6px 16px",
               fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 13,
