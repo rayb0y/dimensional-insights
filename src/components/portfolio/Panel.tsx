@@ -31,9 +31,9 @@ export function Panel({ layer, index, total, onClick }: Props) {
       style={{
         width: PANEL_W,
         height: PANEL_H,
-        transform: `translate(-50%, calc(-50% - ${hover ? 22 : 0}px)) translateZ(${z}px)`,
+        transform: `translate(-50%, calc(-50% - ${hover ? 56 : 0}px)) translateZ(${z}px)`,
         transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1), background 200ms ease",
-        background: hover ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
+        background: hover ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
         border: "1px solid rgba(255,255,255,0.14)",
         backdropFilter: "blur(4px)",
         WebkitBackdropFilter: "blur(4px)",
