@@ -28,13 +28,13 @@ export const layers: Layer[] = [
     accent: ACCENT.neutral,
     label: "Amal Ray",
     eyebrow: "CMU Integrated Innovation Institute  ·  EY  ·  Pittsburgh",
-    title: "With AI, the extraordinary is now possible. Let's make it happen.",
+    title: "With AI, the extraordinary is now possible. Let's use it right.",
     paragraphs: [
       "I work at the intersection of innovation, strategy, and human-AI collaboration — building the conditions for what comes next.",
     ],
     tags: ["Innovation Strategy", "Human-AI Systems", "CMU", "EY"],
     variant: "intro",
-    tagline: "With AI, the extraordinary is now possible. Let's make it happen.",
+    tagline: "With AI, the extraordinary is now possible. Let's use it right.",
   },
   {
     id: "ai-facilitation",
