@@ -6,7 +6,7 @@ export const Route = createFileRoute("/context")({
   component: ContextGame,
   head: () => ({
     meta: [
-      { title: "CONTEXT — A game by Amal Ray" },
+      { title: "CONTEXT · A game by Amal Ray" },
       {
         name: "description",
         content:
@@ -158,7 +158,7 @@ function ContextGame() {
             }}
           >
             You are a language model with a fixed context window. Spend one token per line
-            to add to a story. When the tokens run out you keep playing — but every new
+            to add to a story. When the tokens run out you keep playing, but every new
             line now costs a memory, and you choose what to forget.
           </p>
 
@@ -387,7 +387,7 @@ function ContextGame() {
             animation: "ctx-pulse 1.2s ease-in-out infinite",
           }}
         >
-          FORGETTING — EACH LINE COSTS A MEMORY
+          FORGETTING · EACH LINE COSTS A MEMORY
         </div>
       )}
 

@@ -77,14 +77,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Amal Ray — Product · Design · Technology" },
+      { title: "Amal Ray · Product · Design · Technology" },
       {
         name: "description",
         content:
-          "Portfolio of Amal Ray — consultant at the intersection of business, design and technology. CMU Master's in Integrated Innovation, formerly EY.",
+          "Portfolio of Amal Ray · consultant at the intersection of business, design and technology. CMU Master's in Integrated Innovation, formerly EY.",
       },
       { name: "author", content: "Amal Ray" },
-      { property: "og:title", content: "Amal Ray — Product · Design · Technology" },
+      { property: "og:title", content: "Amal Ray · Product · Design · Technology" },
       {
         property: "og:description",
         content: "A layered cube portfolio. Scroll to turn it. Click any layer to read.",
