@@ -81,16 +81,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Portfolio of Amal Ray · consultant at the intersection of business, design and technology. CMU Master's in Integrated Innovation, formerly EY.",
+          "What's next? Scroll to turn the cube; click any layer to read the work.",
       },
       { name: "author", content: "Amal Ray" },
       { property: "og:title", content: "Amal Ray · Product · Design · Technology" },
       {
         property: "og:description",
-        content: "A layered cube portfolio. Scroll to turn it. Click any layer to read.",
+        content: "What's next? Scroll to turn the cube; click any layer to read the work.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Amal Ray · Product · Design · Technology" },
+      { name: "twitter:description", content: "What's next? Scroll to turn the cube; click any layer to read the work." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/23b22be1-d1ca-4dea-ab5d-8b3d7a9b038a/id-preview-86159273--85c8b75d-3d83-4d4d-9ea4-ad2f938ea91b.lovable.app-1783621903570.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/23b22be1-d1ca-4dea-ab5d-8b3d7a9b038a/id-preview-86159273--85c8b75d-3d83-4d4d-9ea4-ad2f938ea91b.lovable.app-1783621903570.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
