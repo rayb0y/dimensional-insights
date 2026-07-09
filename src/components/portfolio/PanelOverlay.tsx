@@ -182,7 +182,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                 </button>
               </div>
 
-              <div className="min-h-0 flex-1 overflow-y-auto px-8 pb-7 pt-3">
+              <div className="flex-1 overflow-y-auto px-8 pb-7 pt-3">
                 <h2
                   style={{
                     fontFamily: "'Syne', sans-serif",
