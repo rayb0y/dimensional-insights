@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { Layer } from "./data";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Props = {
   layers: Layer[];
@@ -16,6 +17,7 @@ const CARD = "min(760px, 92vmin)";
 
 export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }: Props) {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [usedOrigin, setUsedOrigin] = useState(false);
 
   const index = activeId ? layers.findIndex((l) => l.id === activeId) : -1;
@@ -72,7 +74,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
     <AnimatePresence>
       {layer && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-center justify-center p-6"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -95,9 +97,13 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
             onClick={goPrev}
             className="absolute z-20 flex items-center justify-center"
             style={{
-              right: "calc(50% + min(380px, 46vmin) + 8px)",
-              top: "50%",
-              transform: "translateY(-50%)",
+              ...(isMobile
+                ? { bottom: "3vh", left: "calc(50% - 56px)" }
+                : {
+                    right: "calc(50% + min(380px, 46vmin) + 8px)",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                  }),
               width: 48,
               height: 48,
               border: "none",
@@ -119,9 +125,13 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
             onClick={goNext}
             className="absolute z-20 flex items-center justify-center"
             style={{
-              left: "calc(50% + min(380px, 46vmin) + 8px)",
-              top: "50%",
-              transform: "translateY(-50%)",
+              ...(isMobile
+                ? { bottom: "3vh", left: "calc(50% + 20px)" }
+                : {
+                    left: "calc(50% + min(380px, 46vmin) + 8px)",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                  }),
               width: 48,
               height: 48,
               border: "none",
@@ -149,8 +159,9 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
               }
               className="relative z-10 flex flex-col"
               style={{
-                width: CARD,
-                height: CARD,
+                width: isMobile ? "92vw" : CARD,
+                height: isMobile ? "auto" : CARD,
+                maxHeight: isMobile ? "82vh" : undefined,
                 background: "rgba(255,255,255,0.035)",
                 border: "1px solid rgba(255,255,255,0.2)",
                 backdropFilter: "blur(8px)",

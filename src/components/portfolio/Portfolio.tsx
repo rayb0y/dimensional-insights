@@ -21,9 +21,7 @@ export function Portfolio() {
       <Grain />
 
       {isMobile ? (
-        <div className="h-full overflow-y-auto">
-          <MobileStack onOpen={(id) => handleOpen(id)} />
-        </div>
+        <MobileStack onOpen={(id) => handleOpen(id)} />
       ) : (
         <Cube onOpen={(id, rect) => handleOpen(id, rect)} />
       )}

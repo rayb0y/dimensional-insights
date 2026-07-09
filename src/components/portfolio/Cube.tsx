@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { layers } from "./data";
 import { Panel } from "./Panel";
 
+// How far the cube can be rotated (degrees). The layers fan out across this
+// range; scrolling stops here so you can't spin it all the way around.
+const MIN_ROT = -55;
+const MAX_ROT = 55;
+const clampRot = (v: number) => Math.max(MIN_ROT, Math.min(MAX_ROT, v));
+
 type Props = {
   onOpen: (id: string, rect: DOMRect) => void;
 };
@@ -24,7 +30,7 @@ export function Cube({ onOpen }: Props) {
 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      targetRef.current += (e.deltaY + e.deltaX) * 0.25;
+      targetRef.current = clampRot(targetRef.current + (e.deltaY + e.deltaX) * 0.25);
     };
 
     let touchX: number | null = null;
@@ -39,13 +45,15 @@ export function Cube({ onOpen }: Props) {
       const dy = touchY - e.touches[0].clientY;
       touchX = e.touches[0].clientX;
       touchY = e.touches[0].clientY;
-      targetRef.current += (dy + dx) * 0.6;
+      targetRef.current = clampRot(targetRef.current + (dy + dx) * 0.6);
     };
 
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown" || e.key === "ArrowRight") targetRef.current += 30;
-      if (e.key === "ArrowUp" || e.key === "ArrowLeft") targetRef.current -= 30;
+      if (e.key === "ArrowDown" || e.key === "ArrowRight")
+        targetRef.current = clampRot(targetRef.current + 30);
+      if (e.key === "ArrowUp" || e.key === "ArrowLeft")
+        targetRef.current = clampRot(targetRef.current - 30);
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });
