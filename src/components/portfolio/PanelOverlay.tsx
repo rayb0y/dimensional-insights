@@ -11,7 +11,8 @@ type Props = {
   onChange: (id: string) => void;
 };
 
-const SIZE = 660;
+const SIZE = 760;
+const CARD = "min(760px, 92vmin)";
 
 export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }: Props) {
   const navigate = useNavigate();
@@ -94,20 +95,21 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
             onClick={goPrev}
             className="absolute z-20 flex items-center justify-center"
             style={{
-              left: "max(16px, calc(50% - 400px))",
+              right: "calc(50% + min(380px, 46vmin) + 8px)",
               top: "50%",
               transform: "translateY(-50%)",
               width: 48,
               height: 48,
-              border: "1px solid rgba(255,255,255,0.25)",
-              background: "rgba(255,255,255,0.04)",
-              color: "#f0ede8",
+              border: "none",
+              background: "transparent",
+              color: "rgba(240,237,232,0.5)",
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 20,
+              fontSize: 34,
+              lineHeight: 1,
               cursor: "pointer",
             }}
           >
-            ◀
+            ❮
           </button>
 
           {/* Next arrow */}
@@ -117,20 +119,21 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
             onClick={goNext}
             className="absolute z-20 flex items-center justify-center"
             style={{
-              right: "max(16px, calc(50% - 400px))",
+              left: "calc(50% + min(380px, 46vmin) + 8px)",
               top: "50%",
               transform: "translateY(-50%)",
               width: 48,
               height: 48,
-              border: "1px solid rgba(255,255,255,0.25)",
-              background: "rgba(255,255,255,0.04)",
-              color: "#f0ede8",
+              border: "none",
+              background: "transparent",
+              color: "rgba(240,237,232,0.5)",
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 20,
+              fontSize: 34,
+              lineHeight: 1,
               cursor: "pointer",
             }}
           >
-            ▶
+            ❯
           </button>
 
           <AnimatePresence mode="wait" initial={false}>
@@ -146,10 +149,8 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
               }
               className="relative z-10 flex flex-col"
               style={{
-                width: SIZE,
-                height: SIZE,
-                maxWidth: "92vw",
-                maxHeight: "92vh",
+                width: CARD,
+                height: CARD,
                 background: "rgba(255,255,255,0.035)",
                 border: "1px solid rgba(255,255,255,0.2)",
                 backdropFilter: "blur(8px)",
@@ -187,11 +188,11 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                   style={{
                     fontFamily: "'Syne', sans-serif",
                     fontWeight: 700,
-                    fontSize: 26,
+                    fontSize: 24,
                     lineHeight: 1.15,
                     letterSpacing: "-0.01em",
                     color: "#f0ede8",
-                    marginTop: 12,
+                    marginTop: 6,
                   }}
                 >
                   {layer.title}
@@ -199,14 +200,14 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
 
                 <div
                   style={{
-                    marginTop: 20,
+                    marginTop: 16,
                     display: "flex",
                     flexDirection: "column",
-                    gap: 14,
+                    gap: 12,
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 300,
-                    fontSize: 15,
-                    lineHeight: 1.65,
+                    fontSize: 14,
+                    lineHeight: 1.55,
                     color: "rgba(240,237,232,0.88)",
                   }}
                 >
@@ -232,12 +233,12 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                 {layer.insight && (
                   <div
                     style={{
-                      marginTop: 24,
+                      marginTop: 18,
                       borderLeft: "3px solid rgba(255,255,255,0.25)",
                       paddingLeft: 16,
                       fontFamily: "'Space Grotesk', sans-serif",
                       fontWeight: 400,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontStyle: "italic",
                       lineHeight: 1.5,
                       color: "rgba(240,237,232,0.9)",
@@ -346,7 +347,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                 {layer.tags.length > 0 && (
                   <div
                     style={{
-                      marginTop: 24,
+                      marginTop: 16,
                       display: "flex",
                       flexWrap: "wrap",
                       gap: 8,
