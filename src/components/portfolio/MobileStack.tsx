@@ -24,22 +24,34 @@ function CardFace({ layer }: { layer: Layer }) {
     <div
       className="relative flex h-full w-full flex-col overflow-hidden"
       style={{
-        background: "linear-gradient(158deg, #20202c 0%, #101019 60%, #0b0b12 100%)",
+        background: `linear-gradient(160deg, ${accent} 0%, ${accent}CC 22%, #1a1a24 72%, #0b0b12 100%)`,
         boxShadow:
-          "0 26px 70px rgba(0,0,0,0.7), inset 1px 0 0 rgba(255,255,255,0.06), inset -1px 0 0 rgba(0,0,0,0.5)",
+          "0 30px 80px rgba(0,0,0,0.75), inset 1px 0 0 rgba(255,255,255,0.08), inset -1px 0 0 rgba(0,0,0,0.5)",
       }}
     >
       <div
         aria-hidden
         className="pointer-events-none absolute"
         style={{
-          top: -120,
-          right: -120,
-          width: 380,
-          height: 380,
-          background: `radial-gradient(circle at center, ${accent}2e 0%, transparent 70%)`,
+          top: "-40%",
+          right: "-40%",
+          width: "140%",
+          height: "140%",
+          background: `radial-gradient(circle at center, ${accent} 0%, ${accent}99 30%, ${accent}33 55%, transparent 75%)`,
+          mixBlendMode: "screen",
+          opacity: 0.9,
         }}
       />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0"
+        style={{
+          height: "55%",
+          background:
+            "linear-gradient(to top, rgba(11,11,18,0.85) 0%, rgba(11,11,18,0.4) 55%, transparent 100%)",
+        }}
+      />
+
       <div className="flex items-start px-7 pt-7">
         <span
           className="inline-flex items-center"
