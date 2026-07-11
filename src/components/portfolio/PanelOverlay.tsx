@@ -206,12 +206,13 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
             <motion.div
               key={accent}
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2"
+              className="pointer-events-none absolute left-1/2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
               style={{
+                top: isMobile ? "36%" : "50%",
                 width: 820,
                 height: 820,
                 transform: "translate(-50%, -50%)",
@@ -374,9 +375,9 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                     minHeight: 0,
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: overflows ? "flex-start" : "center",
+                    justifyContent: overflows ? "flex-start" : "flex-end",
                     paddingTop: overflows ? 20 : 0,
-                    paddingBottom: 8,
+                    paddingBottom: overflows ? 8 : 28,
                     ...(overflows ? { maskImage: FADE, WebkitMaskImage: FADE } : {}),
                   }}
                 >
@@ -392,7 +393,8 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       lineHeight: 1.06,
                       letterSpacing: "-0.01em",
                       color: "#f0ede8",
-                      maxWidth: "18ch",
+                      maxWidth: isMobile ? undefined : "18ch",
+                      textWrap: "balance",
                       marginBottom: 20,
                     }}
                   >
@@ -479,12 +481,12 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                   style={{
                     borderTop: "1px solid rgba(255,255,255,0.09)",
                     paddingBottom: isMobile
-                      ? "calc(18px + env(safe-area-inset-bottom, 0px))"
+                      ? "calc(20px + env(safe-area-inset-bottom, 0px))"
                       : 20,
                   }}
                 >
                   {layer.tags.length > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 14 }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 18 }}>
                       {layer.tags.map((t) => (
                         <span
                           key={t}
