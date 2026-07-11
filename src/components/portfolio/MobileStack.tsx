@@ -33,20 +33,20 @@ function CardFace({ layer }: { layer: Layer }) {
         aria-hidden
         className="pointer-events-none absolute"
         style={{
-          top: -100,
-          right: -100,
-          width: 320,
-          height: 320,
+          top: -120,
+          right: -120,
+          width: 380,
+          height: 380,
           background: `radial-gradient(circle at center, ${accent}2e 0%, transparent 70%)`,
         }}
       />
-      <div className="flex items-start px-6 pt-6">
+      <div className="flex items-start px-7 pt-7">
         <span
           className="inline-flex items-center"
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 600,
-            fontSize: 15,
+            fontSize: "clamp(15px, 3.8vw, 19px)",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "rgba(240,237,232,0.9)",
@@ -54,20 +54,20 @@ function CardFace({ layer }: { layer: Layer }) {
         >
           <span
             aria-hidden
-            style={{ width: 7, height: 7, borderRadius: 999, background: accent, marginRight: 10, flex: "none" }}
+            style={{ width: 8, height: 8, borderRadius: 999, background: accent, marginRight: 12, flex: "none" }}
           />
           {layer.label}
         </span>
       </div>
       <div className="flex-1" />
-      <div className="px-6 pb-6">
+      <div className="px-7 pb-8">
         <h2
           style={{
             fontFamily: "'Syne', sans-serif",
             fontWeight: 700,
-            fontSize: "clamp(28px, 8vw, 40px)",
-            lineHeight: 1.06,
-            letterSpacing: "-0.01em",
+            fontSize: "clamp(34px, 10.5vw, 60px)",
+            lineHeight: 1.04,
+            letterSpacing: "-0.015em",
             color: "#f0ede8",
             textWrap: "balance",
           }}
@@ -87,6 +87,8 @@ function StackCard({
   onTap,
   nudge,
   reduce,
+  entering,
+  totalVisible,
 }: {
   layer: Layer;
   depth: number;
@@ -95,13 +97,13 @@ function StackCard({
   onTap: () => void;
   nudge?: number;
   reduce?: boolean | null;
+  entering: boolean;
+  totalVisible: number;
 }) {
   const x = useMotionValue(0);
   const opacity = useTransform(x, [-320, -160, 0, 160, 320], [0, 1, 1, 1, 0]);
   const moved = useRef(false);
 
-  // Whenever this card becomes the front card, snap it back to centre so the
-  // deck never drifts sideways across swipes.
   useEffect(() => {
     if (isFront) x.set(0);
   }, [isFront]);
@@ -112,17 +114,28 @@ function StackCard({
     return () => controls.stop();
   }, [nudge]);
 
+  // Deepest card lands first, front card lands last (on top).
+  const entryDelay = entering && !reduce ? (totalVisible - 1 - depth) * 0.11 : 0;
+  const entryInitial = entering && !reduce ? { y: -320, opacity: 0, rotate: -6 } : false;
+
   if (!isFront) {
     return (
       <motion.div
         className="absolute inset-0"
+        initial={entryInitial}
         animate={{
           scale: 1 - depth * 0.03,
           x: -depth * 15,
           y: depth * 7,
           opacity: 1,
+          rotate: 0,
         }}
-        transition={{ type: "spring", stiffness: 300, damping: 32 }}
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 26,
+          delay: entryDelay,
+        }}
         style={{ zIndex: 10 - depth }}
       >
         <CardFace layer={layer} />
@@ -132,53 +145,62 @@ function StackCard({
 
   return (
     <motion.div
-      role="button"
-      tabIndex={0}
-      aria-label={`Read about ${layer.title}`}
       className="absolute inset-0"
-      style={{ x, opacity, zIndex: 20, touchAction: "pan-y", cursor: "grab" }}
-      drag="x"
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.75}
-      whileTap={{ cursor: "grabbing" }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onTap();
-        }
-      }}
-      onDragStart={() => {
-        moved.current = false;
-      }}
-      onDrag={(_, info) => {
-        if (Math.abs(info.offset.x) > 6) moved.current = true;
-      }}
-      onDragEnd={(_, info) => {
-        const power = info.offset.x + info.velocity.x * 0.2;
-        if (Math.abs(power) > 100) {
-          moved.current = true;
-          const dir = power > 0 ? 1 : -1;
-          if (reduce) {
-            x.set(0);
-            onSwipe(dir);
-          } else {
-            const w = typeof window !== "undefined" ? window.innerWidth : 400;
-            animate(x, dir * w * 1.25, { duration: 0.28, ease: "easeIn" });
-            window.setTimeout(() => onSwipe(dir), 240);
-          }
-        } else {
-          animate(x, 0, { type: "spring", stiffness: 320, damping: 30 });
-        }
-      }}
-      onTap={() => {
-        if (moved.current) return;
-        onTap();
-      }}
+      initial={entryInitial}
+      animate={{ y: 0, opacity: 1, rotate: 0 }}
+      transition={{ type: "spring", stiffness: 260, damping: 26, delay: entryDelay }}
+      style={{ zIndex: 20 }}
     >
-      <CardFace layer={layer} />
+      <motion.div
+        role="button"
+        tabIndex={0}
+        aria-label={`Read about ${layer.title}`}
+        className="absolute inset-0"
+        style={{ x, opacity, touchAction: "pan-y", cursor: "grab" }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.75}
+        whileTap={{ cursor: "grabbing" }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onTap();
+          }
+        }}
+        onDragStart={() => {
+          moved.current = false;
+        }}
+        onDrag={(_, info) => {
+          if (Math.abs(info.offset.x) > 6) moved.current = true;
+        }}
+        onDragEnd={(_, info) => {
+          const power = info.offset.x + info.velocity.x * 0.2;
+          if (Math.abs(power) > 100) {
+            moved.current = true;
+            const dir = power > 0 ? 1 : -1;
+            if (reduce) {
+              x.set(0);
+              onSwipe(dir);
+            } else {
+              const w = typeof window !== "undefined" ? window.innerWidth : 400;
+              animate(x, dir * w * 1.25, { duration: 0.28, ease: "easeIn" });
+              window.setTimeout(() => onSwipe(dir), 240);
+            }
+          } else {
+            animate(x, 0, { type: "spring", stiffness: 320, damping: 30 });
+          }
+        }}
+        onTap={() => {
+          if (moved.current) return;
+          onTap();
+        }}
+      >
+        <CardFace layer={layer} />
+      </motion.div>
     </motion.div>
   );
 }
+
 
 export function MobileStack(_props: Props) {
   const navigate = useNavigate();
@@ -186,6 +208,7 @@ export function MobileStack(_props: Props) {
   const [order, setOrder] = useState(() => layers.map((_, i) => i));
   const [showHint, setShowHint] = useState(false);
   const [nudge, setNudge] = useState(0);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const detailsRef = useRef<HTMLDivElement>(null);
   const deckRef = useRef<HTMLDivElement>(null);
   const [deckVisible, setDeckVisible] = useState(true);
@@ -194,6 +217,8 @@ export function MobileStack(_props: Props) {
   const accent = accentOf(active);
   const total = layers.length;
   const visible = order.slice(0, 4);
+  const entering = !hasInteracted;
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -215,12 +240,15 @@ export function MobileStack(_props: Props) {
   };
   const advance = () => {
     markSwiped();
+    setHasInteracted(true);
     setOrder((o) => [...o.slice(1), o[0]]);
   };
   const retreat = () => {
     markSwiped();
+    setHasInteracted(true);
     setOrder((o) => [o[o.length - 1], ...o.slice(0, o.length - 1)]);
   };
+
   const scrollToDetails = () =>
     detailsRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 
@@ -326,7 +354,10 @@ export function MobileStack(_props: Props) {
           </div>
         )}
 
-        <div className="relative mt-20" style={{ width: "84vw", height: "56vh", marginLeft: 18 }}>
+        <div
+          className="relative mt-16"
+          style={{ width: "min(94vw, 460px)", height: "min(70vh, 640px)" }}
+        >
           {visible.map((idx, depth) => (
             <StackCard
               key={layers[idx].id}
@@ -337,9 +368,12 @@ export function MobileStack(_props: Props) {
               onTap={scrollToDetails}
               nudge={depth === 0 ? nudge : undefined}
               reduce={reduce}
+              entering={entering}
+              totalVisible={visible.length}
             />
           ))}
         </div>
+
 
         <button
           type="button"
