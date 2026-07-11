@@ -7,24 +7,23 @@ import {
   useTransform,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { layers, type Layer } from "./data";
 
 type Props = {
-  onOpen: (id: string, rect?: DOMRect) => void;
+  onOpen?: (id: string, rect?: DOMRect) => void;
 };
 
-const glowStops = (accent: string) => {
-  const c = accent && accent.startsWith("#") ? accent : "#ffcc33";
-  return `${c}40 0%, ${c}14 34%, ${c}00 62%`;
-};
+const accentOf = (l: Layer) => (l.accent.startsWith("#") ? l.accent : "#ffcc33");
+const glowStops = (accent: string) => `${accent}40 0%, ${accent}14 34%, ${accent}00 62%`;
 
-function CardFace({ layer, dim, bare }: { layer: Layer; dim?: boolean; bare?: boolean }) {
-  const accent = layer.accent.startsWith("#") ? layer.accent : "#ffcc33";
+// Deck cover: label + title only. The full copy lives in the article below.
+function CardFace({ layer, dim }: { layer: Layer; dim?: boolean }) {
+  const accent = accentOf(layer);
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden"
       style={{
-        borderRadius: 0,
         background: dim ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.05)",
         backdropFilter: dim ? undefined : "blur(12px)",
         WebkitBackdropFilter: dim ? undefined : "blur(12px)",
@@ -36,112 +35,48 @@ function CardFace({ layer, dim, bare }: { layer: Layer; dim?: boolean; bare?: bo
         aria-hidden
         className="pointer-events-none absolute"
         style={{
-          top: -120,
-          right: -120,
-          width: 380,
-          height: 380,
+          top: -100,
+          right: -100,
+          width: 320,
+          height: 320,
           background: `radial-gradient(circle at center, ${accent}2e 0%, transparent 70%)`,
         }}
       />
-
-      {!bare && (
-        <>
-          <div className="flex items-start px-7 pt-8">
-            <span
-              className="inline-flex items-center"
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 600,
-                fontSize: 18,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "rgba(240,237,232,0.9)",
-              }}
-            >
-              <span
-                aria-hidden
-                style={{
-                  width: 7,
-                  height: 7,
-                  borderRadius: 999,
-                  background: accent,
-                  marginRight: 10,
-                  flex: "none",
-                }}
-              />
-              {layer.label}
-            </span>
-          </div>
-
-          <div className="flex-1" />
-
-          <div className="px-7 pb-9">
-            <div
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 12,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "rgba(240,237,232,0.55)",
-                marginBottom: 14,
-                lineHeight: 1.5,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }}
-            >
-              {layer.eyebrow}
-            </div>
-            <h2
-              style={{
-                fontFamily: "'Syne', sans-serif",
-                fontWeight: 700,
-                fontSize: "clamp(30px, 9vw, 46px)",
-                lineHeight: 1.05,
-                letterSpacing: "-0.01em",
-                color: "#f0ede8",
-              }}
-            >
-              {layer.title}
-            </h2>
-            {layer.tags.length > 0 && (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 20 }}>
-                {layer.tags.slice(0, 4).map((t) => (
-                  <span
-                    key={t}
-                    style={{
-                      padding: "4px 11px",
-                      border: "1px solid rgba(255,255,255,0.24)",
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 500,
-                      fontSize: 11,
-                      letterSpacing: "0.07em",
-                      textTransform: "uppercase",
-                      color: "rgba(240,237,232,0.6)",
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            )}
-            <div
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 13,
-                fontWeight: 500,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: accent,
-                marginTop: 24,
-              }}
-            >
-              Tap to open ↗
-            </div>
-          </div>
-        </>
-      )}
+      <div className="flex items-start px-6 pt-6">
+        <span
+          className="inline-flex items-center"
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 600,
+            fontSize: 15,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "rgba(240,237,232,0.9)",
+          }}
+        >
+          <span
+            aria-hidden
+            style={{ width: 7, height: 7, borderRadius: 999, background: accent, marginRight: 10, flex: "none" }}
+          />
+          {layer.label}
+        </span>
+      </div>
+      <div className="flex-1" />
+      <div className="px-6 pb-6">
+        <h2
+          style={{
+            fontFamily: "'Syne', sans-serif",
+            fontWeight: 700,
+            fontSize: "clamp(28px, 8vw, 40px)",
+            lineHeight: 1.06,
+            letterSpacing: "-0.01em",
+            color: "#f0ede8",
+            textWrap: "balance",
+          }}
+        >
+          {layer.title}
+        </h2>
+      </div>
     </div>
   );
 }
@@ -151,7 +86,7 @@ function StackCard({
   depth,
   isFront,
   onSwipe,
-  onOpen,
+  onTap,
   nudge,
   reduce,
 }: {
@@ -159,7 +94,7 @@ function StackCard({
   depth: number;
   isFront: boolean;
   onSwipe: (dir: number) => void;
-  onOpen: (id: string, rect?: DOMRect) => void;
+  onTap: () => void;
   nudge?: number;
   reduce?: boolean | null;
 }) {
@@ -167,16 +102,10 @@ function StackCard({
   const rotate = useTransform(x, [-240, 240], [-7, 7]);
   const opacity = useTransform(x, [-320, -160, 0, 160, 320], [0, 1, 1, 1, 0]);
   const moved = useRef(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const open = () => onOpen(layer.id, cardRef.current?.getBoundingClientRect());
 
   useEffect(() => {
     if (!nudge || reduce) return;
-    const controls = animate(x, [0, -16, 0], {
-      duration: 0.7,
-      times: [0, 0.35, 1],
-      ease: "easeInOut",
-    });
+    const controls = animate(x, [0, -16, 0], { duration: 0.7, times: [0, 0.35, 1], ease: "easeInOut" });
     return () => controls.stop();
   }, [nudge]);
 
@@ -184,9 +113,15 @@ function StackCard({
     return (
       <motion.div
         className="absolute inset-0"
-        animate={{ scale: 1 - depth * 0.04, y: depth * 12, opacity: depth < 2 ? 1 : 0.5 }}
+        animate={{
+          scale: 1 - depth * 0.03,
+          y: depth * 16,
+          x: depth * 5,
+          rotate: depth * 2.6,
+          opacity: 1 - depth * 0.14,
+        }}
         transition={{ type: "spring", stiffness: 300, damping: 32 }}
-        style={{ zIndex: 10 - depth }}
+        style={{ zIndex: 10 - depth, transformOrigin: "center top" }}
       >
         <CardFace layer={layer} dim />
       </motion.div>
@@ -195,10 +130,9 @@ function StackCard({
 
   return (
     <motion.div
-      ref={cardRef}
       role="button"
       tabIndex={0}
-      aria-label={`Open ${layer.title}`}
+      aria-label={`Read about ${layer.title}`}
       className="absolute inset-0"
       style={{ x, rotate, opacity, zIndex: 20, touchAction: "pan-y", cursor: "grab" }}
       drag="x"
@@ -208,7 +142,7 @@ function StackCard({
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          open();
+          onTap();
         }
       }}
       onDragStart={() => {
@@ -236,7 +170,7 @@ function StackCard({
       }}
       onTap={() => {
         if (moved.current) return;
-        open();
+        onTap();
       }}
     >
       <CardFace layer={layer} />
@@ -244,14 +178,18 @@ function StackCard({
   );
 }
 
-export function MobileStack({ onOpen }: Props) {
+export function MobileStack(_props: Props) {
+  const navigate = useNavigate();
   const reduce = useReducedMotion();
   const [order, setOrder] = useState(() => layers.map((_, i) => i));
   const [showHint, setShowHint] = useState(false);
   const [nudge, setNudge] = useState(0);
+  const detailsRef = useRef<HTMLDivElement>(null);
+
+  const active = layers[order[0]];
+  const accent = accentOf(active);
   const total = layers.length;
-  const frontLayer = layers[order[0]];
-  const visible = order.slice(0, 3);
+  const visible = order.slice(0, 4);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -271,7 +209,6 @@ export function MobileStack({ onOpen }: Props) {
       /* ignore */
     }
   };
-
   const advance = () => {
     markSwiped();
     setOrder((o) => [...o.slice(1), o[0]]);
@@ -280,8 +217,9 @@ export function MobileStack({ onOpen }: Props) {
     markSwiped();
     setOrder((o) => [o[o.length - 1], ...o.slice(0, o.length - 1)]);
   };
+  const scrollToDetails = () =>
+    detailsRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 
-  // Idle nudge to teach the swipe, only until the first swipe.
   useEffect(() => {
     if (!showHint || reduce) return;
     const t = window.setTimeout(() => setNudge((n) => n + 1), 1500);
@@ -290,72 +228,222 @@ export function MobileStack({ onOpen }: Props) {
 
   return (
     <div
-      className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: "#07070f", touchAction: "pan-y" }}
+      className="fixed inset-0 overflow-y-auto"
+      style={{ background: "#07070f", WebkitOverflowScrolling: "touch" }}
     >
-      <AnimatePresence>
-        <motion.div
-          key={frontLayer.accent}
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.42 }}
-          style={{
-            width: "160vw",
-            height: "160vw",
-            transform: "translate(-50%, -50%)",
-            background: `radial-gradient(circle at center, ${glowStops(frontLayer.accent)})`,
-            filter: "blur(30px)",
-            willChange: "opacity",
-          }}
-        />
-      </AnimatePresence>
+      {/* Deck */}
+      <div className="relative flex flex-col items-center" style={{ minHeight: "100svh" }}>
+        <AnimatePresence>
+          <motion.div
+            key={accent}
+            aria-hidden
+            className="pointer-events-none absolute left-1/2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.42 }}
+            style={{
+              top: "42%",
+              width: "160vw",
+              height: "160vw",
+              transform: "translate(-50%, -50%)",
+              background: `radial-gradient(circle at center, ${glowStops(accent)})`,
+              filter: "blur(30px)",
+              willChange: "opacity",
+            }}
+          />
+        </AnimatePresence>
 
-      {showHint && (
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-center"
+        {showHint && (
+          <div
+            className="pointer-events-none absolute inset-x-0 flex items-center justify-center"
+            style={{
+              top: "calc(env(safe-area-inset-top, 0px) + 22px)",
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 14,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "rgba(240,237,232,0.45)",
+            }}
+          >
+            Swipe to change
+          </div>
+        )}
+
+        <div className="relative mt-24" style={{ width: "86vw", height: "56vh" }}>
+          {visible.map((idx, depth) => (
+            <StackCard
+              key={layers[idx].id}
+              layer={layers[idx]}
+              depth={depth}
+              isFront={depth === 0}
+              onSwipe={(dir) => (dir < 0 ? advance() : retreat())}
+              onTap={scrollToDetails}
+              nudge={depth === 0 ? nudge : undefined}
+              reduce={reduce}
+            />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={scrollToDetails}
+          className="relative mt-8 flex flex-col items-center"
           style={{
-            paddingTop: "calc(env(safe-area-inset-top, 0px) + 20px)",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
             fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14,
-            letterSpacing: "0.16em",
+            fontSize: 12,
+            letterSpacing: "0.18em",
             textTransform: "uppercase",
-            color: "rgba(240,237,232,0.45)",
+            color: "rgba(240,237,232,0.5)",
           }}
         >
-          Swipe · Tap to open
-        </div>
-      )}
-
-      <div className="relative" style={{ width: "88vw", height: "76vh" }}>
-        {visible.map((idx, depth) => (
-          <StackCard
-            key={layers[idx].id}
-            layer={layers[idx]}
-            depth={depth}
-            isFront={depth === 0}
-            onSwipe={(dir) => (dir < 0 ? advance() : retreat())}
-            onOpen={onOpen}
-            nudge={depth === 0 ? nudge : undefined}
-            reduce={reduce}
-          />
-        ))}
+          {String(order[0] + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+          <span style={{ marginTop: 8, fontSize: 18, lineHeight: 1 }}>↓</span>
+        </button>
       </div>
 
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center"
-        style={{
-          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)",
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 12,
-          letterSpacing: "0.16em",
-          color: "rgba(240,237,232,0.45)",
-        }}
+      {/* Article for the active project */}
+      <motion.article
+        ref={detailsRef}
+        key={active.id}
+        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="relative mx-auto w-full px-6 pb-28 pt-10"
+        style={{ maxWidth: 640, borderTop: "1px solid rgba(255,255,255,0.08)" }}
       >
-        {String(order[0] + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-      </div>
+        <div
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 12.5,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: "rgba(240,237,232,0.55)",
+            lineHeight: 1.6,
+            marginBottom: 18,
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              display: "inline-block",
+              width: 6,
+              height: 6,
+              borderRadius: 999,
+              background: accent,
+              marginRight: 9,
+              verticalAlign: "middle",
+            }}
+          />
+          {active.eyebrow}
+        </div>
+
+        <h1
+          style={{
+            fontFamily: "'Syne', sans-serif",
+            fontWeight: 700,
+            fontSize: "clamp(28px, 8vw, 40px)",
+            lineHeight: 1.08,
+            letterSpacing: "-0.01em",
+            color: "#f0ede8",
+            textWrap: "balance",
+            marginBottom: 24,
+          }}
+        >
+          {active.title}
+        </h1>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          {active.paragraphs.map((p, i) => (
+            <p
+              key={i}
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 300,
+                fontSize: 18,
+                lineHeight: 1.72,
+                color: "rgba(240,237,232,0.9)",
+              }}
+            >
+              {p}
+            </p>
+          ))}
+        </div>
+
+        {active.variant === "lalama" && (
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/context" })}
+            style={linkStyle}
+          >
+            Play Context →
+          </button>
+        )}
+
+        {active.watchUrl && (
+          <a href={active.watchUrl} target="_blank" rel="noreferrer" style={linkStyle}>
+            Watch Film →
+          </a>
+        )}
+
+        {(active.variant === "contact" || active.variant === "intro") && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 26 }}>
+            <a href="mailto:amalr@andrew.cmu.edu" style={{ ...linkStyle, marginTop: 0 }}>
+              amalr@andrew.cmu.edu
+            </a>
+            <a
+              href="https://www.linkedin.com/in/amal-ray-577a69175/"
+              target="_blank"
+              rel="noreferrer"
+              style={{ ...linkStyle, marginTop: 0 }}
+            >
+              LinkedIn
+            </a>
+          </div>
+        )}
+
+        {active.tags.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 30 }}>
+            {active.tags.map((t) => (
+              <span
+                key={t}
+                style={{
+                  padding: "5px 12px",
+                  border: "1px solid rgba(255,255,255,0.22)",
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontWeight: 500,
+                  fontSize: 12,
+                  letterSpacing: "0.07em",
+                  textTransform: "uppercase",
+                  color: "rgba(240,237,232,0.55)",
+                }}
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
+      </motion.article>
     </div>
   );
 }
+
+const linkStyle = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 10,
+  marginTop: 26,
+  padding: "13px 24px",
+  border: "1px solid rgba(255,255,255,0.35)",
+  fontFamily: "'Space Grotesk', sans-serif",
+  fontSize: 14,
+  fontWeight: 500,
+  letterSpacing: "0.05em",
+  color: "#f0ede8",
+  background: "transparent",
+  textDecoration: "none",
+  cursor: "pointer",
+} as const;

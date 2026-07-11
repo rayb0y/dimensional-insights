@@ -439,10 +439,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                     <div style={{ marginTop: 22 }}>
                       <button
                         type="button"
-                        onClick={() => {
-                          onClose();
-                          navigate({ to: "/context" });
-                        }}
+                        onClick={() => navigate({ to: "/context" })}
                         style={linkBtn}
                       >
                         Play Context →
