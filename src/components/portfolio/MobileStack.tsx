@@ -33,20 +33,20 @@ function CardFace({ layer }: { layer: Layer }) {
         aria-hidden
         className="pointer-events-none absolute"
         style={{
-          top: -100,
-          right: -100,
-          width: 320,
-          height: 320,
+          top: -120,
+          right: -120,
+          width: 380,
+          height: 380,
           background: `radial-gradient(circle at center, ${accent}2e 0%, transparent 70%)`,
         }}
       />
-      <div className="flex items-start px-6 pt-6">
+      <div className="flex items-start px-7 pt-7">
         <span
           className="inline-flex items-center"
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 600,
-            fontSize: 15,
+            fontSize: "clamp(15px, 3.8vw, 19px)",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: "rgba(240,237,232,0.9)",
@@ -54,20 +54,20 @@ function CardFace({ layer }: { layer: Layer }) {
         >
           <span
             aria-hidden
-            style={{ width: 7, height: 7, borderRadius: 999, background: accent, marginRight: 10, flex: "none" }}
+            style={{ width: 8, height: 8, borderRadius: 999, background: accent, marginRight: 12, flex: "none" }}
           />
           {layer.label}
         </span>
       </div>
       <div className="flex-1" />
-      <div className="px-6 pb-6">
+      <div className="px-7 pb-8">
         <h2
           style={{
             fontFamily: "'Syne', sans-serif",
             fontWeight: 700,
-            fontSize: "clamp(28px, 8vw, 40px)",
-            lineHeight: 1.06,
-            letterSpacing: "-0.01em",
+            fontSize: "clamp(34px, 10.5vw, 60px)",
+            lineHeight: 1.04,
+            letterSpacing: "-0.015em",
             color: "#f0ede8",
             textWrap: "balance",
           }}
