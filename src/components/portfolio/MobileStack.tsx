@@ -24,23 +24,35 @@ function CardFace({ layer }: { layer: Layer }) {
     <div
       className="relative flex h-full w-full flex-col overflow-hidden"
       style={{
-        background: "linear-gradient(158deg, #20202c 0%, #101019 60%, #0b0b12 100%)",
+        background: `linear-gradient(160deg, ${accent} 0%, ${accent}CC 22%, #1a1a24 72%, #0b0b12 100%)`,
         boxShadow:
-          "0 26px 70px rgba(0,0,0,0.7), inset 1px 0 0 rgba(255,255,255,0.06), inset -1px 0 0 rgba(0,0,0,0.5)",
+          "0 30px 80px rgba(0,0,0,0.75), inset 1px 0 0 rgba(255,255,255,0.08), inset -1px 0 0 rgba(0,0,0,0.5)",
       }}
     >
       <div
         aria-hidden
         className="pointer-events-none absolute"
         style={{
-          top: -120,
-          right: -120,
-          width: 380,
-          height: 380,
-          background: `radial-gradient(circle at center, ${accent}2e 0%, transparent 70%)`,
+          top: "-40%",
+          right: "-40%",
+          width: "140%",
+          height: "140%",
+          background: `radial-gradient(circle at center, ${accent} 0%, ${accent}99 30%, ${accent}33 55%, transparent 75%)`,
+          mixBlendMode: "screen",
+          opacity: 0.9,
         }}
       />
-      <div className="flex items-start px-7 pt-7">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0"
+        style={{
+          height: "55%",
+          background:
+            "linear-gradient(to top, rgba(11,11,18,0.85) 0%, rgba(11,11,18,0.4) 55%, transparent 100%)",
+        }}
+      />
+
+      <div className="relative flex items-start px-7 pt-7" style={{ zIndex: 1 }}>
         <span
           className="inline-flex items-center"
           style={{
@@ -49,18 +61,27 @@ function CardFace({ layer }: { layer: Layer }) {
             fontSize: "clamp(15px, 3.8vw, 19px)",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
-            color: "rgba(240,237,232,0.9)",
+            color: "#f0ede8",
+            textShadow: "0 1px 2px rgba(0,0,0,0.35)",
           }}
         >
           <span
             aria-hidden
-            style={{ width: 8, height: 8, borderRadius: 999, background: accent, marginRight: 12, flex: "none" }}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 999,
+              background: "#f0ede8",
+              marginRight: 12,
+              flex: "none",
+              boxShadow: "0 0 0 2px rgba(0,0,0,0.2)",
+            }}
           />
           {layer.label}
         </span>
       </div>
       <div className="flex-1" />
-      <div className="px-7 pb-8">
+      <div className="relative px-7 pb-8" style={{ zIndex: 1 }}>
         <h2
           style={{
             fontFamily: "'Syne', sans-serif",
@@ -70,11 +91,13 @@ function CardFace({ layer }: { layer: Layer }) {
             letterSpacing: "-0.015em",
             color: "#f0ede8",
             textWrap: "balance",
+            textShadow: "0 2px 20px rgba(0,0,0,0.4)",
           }}
         >
           {layer.title}
         </h2>
       </div>
+
     </div>
   );
 }
@@ -355,8 +378,9 @@ export function MobileStack(_props: Props) {
         )}
 
         <div
-          className="relative mt-16"
-          style={{ width: "min(94vw, 460px)", height: "min(70vh, 640px)" }}
+          className="relative mt-10"
+          style={{ width: "min(96vw, 480px)", height: "min(78vh, 720px)" }}
+
         >
           {visible.map((idx, depth) => (
             <StackCard
