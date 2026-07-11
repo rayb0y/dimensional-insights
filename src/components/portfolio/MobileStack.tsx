@@ -114,14 +114,12 @@ function StackCard({
       <motion.div
         className="absolute inset-0"
         animate={{
-          scale: 1 - depth * 0.03,
-          y: depth * 16,
-          x: depth * 5,
-          rotate: depth * 2.6,
-          opacity: 1 - depth * 0.14,
+          scale: 1 - depth * 0.05,
+          y: depth * 20,
+          opacity: 1 - depth * 0.18,
         }}
         transition={{ type: "spring", stiffness: 300, damping: 32 }}
-        style={{ zIndex: 10 - depth, transformOrigin: "center top" }}
+        style={{ zIndex: 10 - depth }}
       >
         <CardFace layer={layer} dim />
       </motion.div>
@@ -324,7 +322,7 @@ export function MobileStack(_props: Props) {
           </div>
         )}
 
-        <div className="relative mt-20" style={{ width: "86vw", height: "50vh" }}>
+        <div className="relative mt-20" style={{ width: "90vw", height: "56vh" }}>
           {visible.map((idx, depth) => (
             <StackCard
               key={layers[idx].id}
