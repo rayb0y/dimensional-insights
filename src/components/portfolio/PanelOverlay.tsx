@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { Layer } from "./data";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -15,26 +15,33 @@ type Props = {
 const SIZE = 760;
 const CARD = "min(760px, 92vmin)";
 
+const NOISE =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>",
+  );
+
+const shortLabel = (l: Layer) => l.label.split("·")[0].trim();
+
 export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }: Props) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [usedOrigin, setUsedOrigin] = useState(false);
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
 
   const index = activeId ? layers.findIndex((l) => l.id === activeId) : -1;
   const layer = index >= 0 ? layers[index] : null;
+  const total = layers.length;
 
-  const goPrev = () => {
+  const goTo = (delta: number) => {
     if (index < 0) return;
-    const next = (index - 1 + layers.length) % layers.length;
+    const n = (index + delta + total) % total;
     setUsedOrigin(true);
-    onChange(layers[next].id);
+    setTilt({ rx: 0, ry: 0 });
+    onChange(layers[n].id);
   };
-  const goNext = () => {
-    if (index < 0) return;
-    const next = (index + 1) % layers.length;
-    setUsedOrigin(true);
-    onChange(layers[next].id);
-  };
+  const goPrev = () => goTo(-1);
+  const goNext = () => goTo(1);
 
   useEffect(() => {
     if (!layer) {
@@ -70,6 +77,35 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
         }
       : { x: 0, y: 30, scale: 0.98, opacity: 0 };
 
+  const accent = layer ? layer.accent : "#ffffff";
+  const prev = layers[(index - 1 + total) % total] ?? layers[0];
+  const next = layers[(index + 1) % total] ?? layers[0];
+  const isLede = !!layer && layer.paragraphs.length > 1;
+
+  const onMove = (e: ReactMouseEvent) => {
+    if (isMobile) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    setTilt({ rx: -py * 4, ry: px * 4 });
+  };
+
+  const linkBtn = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "11px 22px",
+    border: "1px solid rgba(255,255,255,0.35)",
+    fontFamily: "'Space Grotesk', sans-serif",
+    fontSize: 13,
+    fontWeight: 500,
+    letterSpacing: "0.05em",
+    color: "#f0ede8",
+    background: "transparent",
+    textDecoration: "none",
+    cursor: "pointer",
+  } as const;
+
   return (
     <AnimatePresence>
       {layer && (
@@ -79,310 +115,313 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
         >
+          <style>{`.pov-active ::selection{background:${accent};color:#07070f}.pov-scroll{scrollbar-width:none}.pov-scroll::-webkit-scrollbar{display:none}.pov-nav{transition:color .2s ease}.pov-nav:hover{color:${accent}}.pov-arrow{display:inline-block;transition:transform .2s ease}.pov-nav-prev:hover .pov-arrow{transform:translateX(-4px)}.pov-nav-next:hover .pov-arrow{transform:translateX(4px)}`}</style>
+
           <div
             className="absolute inset-0"
             onClick={onClose}
             style={{
-              background: "rgba(0,0,0,0.75)",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
+              background: "rgba(0,0,0,0.8)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
             }}
           />
 
-          {/* Prev arrow */}
-          <button
-            type="button"
-            aria-label="Previous"
-            onClick={goPrev}
-            className="absolute z-20 flex items-center justify-center"
+          {/* Accent-shifted ambient glow behind the card */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2"
             style={{
-              ...(isMobile
-                ? { bottom: "3vh", left: "calc(50% - 56px)" }
-                : {
-                    right: "calc(50% + min(380px, 46vmin) + 8px)",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }),
-              width: 48,
-              height: 48,
-              border: "none",
-              background: "transparent",
-              color: "rgba(240,237,232,0.5)",
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 34,
-              lineHeight: 1,
-              cursor: "pointer",
+              width: 820,
+              height: 820,
+              transform: "translate(-50%, -50%)",
+              background: `radial-gradient(circle at center, ${accent}44 0%, ${accent}14 34%, rgba(255,204,51,0.04) 55%, transparent 72%)`,
+              filter: "blur(28px)",
+              transition: "background 400ms ease",
             }}
-          >
-            ❮
-          </button>
-
-          {/* Next arrow */}
-          <button
-            type="button"
-            aria-label="Next"
-            onClick={goNext}
-            className="absolute z-20 flex items-center justify-center"
-            style={{
-              ...(isMobile
-                ? { bottom: "3vh", left: "calc(50% + 20px)" }
-                : {
-                    left: "calc(50% + min(380px, 46vmin) + 8px)",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }),
-              width: 48,
-              height: 48,
-              border: "none",
-              background: "transparent",
-              color: "rgba(240,237,232,0.5)",
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 34,
-              lineHeight: 1,
-              cursor: "pointer",
-            }}
-          >
-            ❯
-          </button>
+          />
 
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={layer.id}
-              initial={usedOrigin ? { opacity: 0, y: 30, scale: 0.98 } : zoomInitial}
+              initial={usedOrigin ? { opacity: 0, y: 24, scale: 0.985 } : zoomInitial}
               animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
-              exit={usedOrigin ? { opacity: 0, y: -30, scale: 0.98 } : zoomInitial}
+              exit={usedOrigin ? { opacity: 0, y: -24, scale: 0.985 } : zoomInitial}
               transition={
                 usedOrigin
-                  ? { duration: 0.25, ease: [0.22, 1, 0.36, 1] }
-                  : { type: "spring", stiffness: 180, damping: 22 }
+                  ? { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
+                  : { type: "spring", stiffness: 170, damping: 22 }
               }
-              className="relative z-10 flex flex-col"
+              onMouseMove={onMove}
+              onMouseLeave={() => setTilt({ rx: 0, ry: 0 })}
+              className="relative z-10"
               style={{
                 width: isMobile ? "92vw" : CARD,
-                height: isMobile ? "auto" : CARD,
-                maxHeight: isMobile ? "82vh" : undefined,
-                background: "rgba(255,255,255,0.035)",
-                border: "1px solid rgba(255,255,255,0.2)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                boxShadow:
-                  "0 40px 120px rgba(0,0,0,0.7), 0 0 80px rgba(255,204,51,0.18)",
+                height: isMobile ? "min(82vh, 720px)" : CARD,
+                perspective: 1400,
               }}
             >
-              <div className="flex items-center justify-between px-8 pt-6">
-                <span
-                  style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontWeight: 500,
-                    fontSize: 11,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: "rgba(240,237,232,0.5)",
-                  }}
-                >
-                  {layer.eyebrow}
-                </span>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  aria-label="Close"
-                  className="text-text-muted transition-colors hover:text-text-primary"
-                  style={{ fontSize: 22, lineHeight: 1, marginLeft: 12 }}
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto px-8 pb-7 pt-3">
-                <h2
-                  style={{
-                    fontFamily: "'Syne', sans-serif",
-                    fontWeight: 700,
-                    fontSize: 24,
-                    lineHeight: 1.15,
-                    letterSpacing: "-0.01em",
-                    color: "#f0ede8",
-                    marginTop: 6,
-                  }}
-                >
-                  {layer.title}
-                </h2>
-
+              <div
+                className="pov-active relative flex h-full flex-col overflow-hidden"
+                style={{
+                  transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
+                  transformStyle: "preserve-3d",
+                  transition: "transform 300ms cubic-bezier(0.22,1,0.36,1)",
+                  background: "rgba(255,255,255,0.035)",
+                  border: "1px solid rgba(255,255,255,0.16)",
+                  backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
+                  boxShadow: "0 40px 120px rgba(0,0,0,0.7)",
+                }}
+              >
+                {/* top-edge highlight */}
                 <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0"
+                  style={{ height: 1, background: "rgba(255,255,255,0.14)" }}
+                />
+                {/* accent corner glow */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute"
                   style={{
-                    marginTop: 16,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 12,
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontWeight: 300,
-                    fontSize: 14,
-                    lineHeight: 1.55,
-                    color: "rgba(240,237,232,0.88)",
+                    top: -120,
+                    right: -120,
+                    width: 340,
+                    height: 340,
+                    background: `radial-gradient(circle at center, ${accent}22 0%, transparent 70%)`,
                   }}
-                >
-                  {layer.paragraphs.map((p, i) => (
-                    <p key={i}>{p}</p>
-                  ))}
-                </div>
+                />
+                {/* noise */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    backgroundImage: `url("${NOISE}")`,
+                    backgroundSize: "140px 140px",
+                    opacity: 0.03,
+                    mixBlendMode: "overlay",
+                  }}
+                />
 
-                {layer.awardLine && (
-                  <div
+                {/* Header (fixed) */}
+                <div className="relative flex-none px-8 pt-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <span
+                      className="inline-flex items-center"
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontWeight: 500,
+                        fontSize: 11,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        color: "rgba(240,237,232,0.55)",
+                      }}
+                    >
+                      <span
+                        aria-hidden
+                        style={{
+                          width: 5,
+                          height: 5,
+                          borderRadius: 999,
+                          background: accent,
+                          marginRight: 10,
+                          flex: "none",
+                        }}
+                      />
+                      {layer.eyebrow}
+                    </span>
+                    <div className="flex flex-none items-center gap-3">
+                      <span
+                        style={{
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontSize: 11,
+                          letterSpacing: "0.16em",
+                          color: "rgba(240,237,232,0.4)",
+                        }}
+                      >
+                        {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="Close"
+                        className="text-text-muted transition-colors hover:text-text-primary"
+                        style={{ fontSize: 22, lineHeight: 1 }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+
+                  <h2
                     style={{
+                      fontFamily: "'Syne', sans-serif",
+                      fontWeight: 700,
+                      fontSize: "clamp(26px, 4.6vmin, 42px)",
+                      lineHeight: 1.08,
+                      letterSpacing: "-0.01em",
+                      color: "#f0ede8",
                       marginTop: 16,
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 400,
-                      fontSize: 13,
-                      color: "rgba(240,237,232,0.6)",
+                      maxWidth: "18ch",
                     }}
                   >
-                    {layer.awardLine}
-                  </div>
-                )}
+                    {layer.title}
+                  </h2>
+                </div>
 
-                {layer.insight && (
+                {/* Body (scrolls) */}
+                <div
+                  className="pov-scroll relative flex-1 overflow-y-auto px-8 pt-6"
+                  style={{
+                    minHeight: 0,
+                    maskImage:
+                      "linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%)",
+                  }}
+                >
                   <div
                     style={{
-                      marginTop: 18,
-                      borderLeft: "3px solid rgba(255,255,255,0.25)",
-                      paddingLeft: 16,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 14,
+                      maxWidth: "62ch",
                       fontFamily: "'Space Grotesk', sans-serif",
-                      fontWeight: 400,
-                      fontSize: 14,
-                      fontStyle: "italic",
-                      lineHeight: 1.5,
+                      fontWeight: 300,
                       color: "rgba(240,237,232,0.9)",
                     }}
                   >
-                    {layer.insight}
+                    {layer.paragraphs.map((p, i) => (
+                      <p
+                        key={i}
+                        style={{
+                          fontSize: isLede && i === 0 ? 19 : 17,
+                          lineHeight: 1.65,
+                          color:
+                            isLede && i === 0
+                              ? "rgba(240,237,232,0.96)"
+                              : "rgba(240,237,232,0.88)",
+                        }}
+                      >
+                        {p}
+                      </p>
+                    ))}
                   </div>
-                )}
 
-                {layer.variant === "lalama" && (
-                  <div style={{ marginTop: 20 }}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        navigate({ to: "/context" });
-                      }}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 10,
-                        padding: "12px 24px",
-                        border: "1px solid rgba(255,255,255,0.4)",
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: 14,
-                        fontWeight: 500,
-                        letterSpacing: "0.05em",
-                        color: "#f0ede8",
-                        background: "transparent",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Play CONTEXT →
-                    </button>
-                  </div>
-                )}
+                  {layer.variant === "lalama" && (
+                    <div style={{ marginTop: 22 }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onClose();
+                          navigate({ to: "/context" });
+                        }}
+                        style={linkBtn}
+                      >
+                        Play Context →
+                      </button>
+                    </div>
+                  )}
 
-                {layer.watchUrl && (
-                  <div style={{ marginTop: 20 }}>
-                    <a
-                      href={layer.watchUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 10,
-                        padding: "12px 24px",
-                        border: "1px solid rgba(255,255,255,0.4)",
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: 14,
-                        fontWeight: 500,
-                        letterSpacing: "0.05em",
-                        color: "#f0ede8",
-                        background: "transparent",
-                        textDecoration: "none",
-                      }}
-                    >
-                      Watch Film →
-                    </a>
-                  </div>
-                )}
+                  {layer.watchUrl && (
+                    <div style={{ marginTop: 22 }}>
+                      <a href={layer.watchUrl} target="_blank" rel="noreferrer" style={linkBtn}>
+                        Watch Film →
+                      </a>
+                    </div>
+                  )}
 
-                {layer.variant === "contact" && (
-                  <div
-                    style={{
-                      marginTop: 24,
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: 12,
-                    }}
-                  >
-                    {[
-                      { href: "mailto:amalr@andrew.cmu.edu", label: "amalr@andrew.cmu.edu" },
-                      {
-                        href: "https://www.linkedin.com/in/amal-ray-577a69175/",
-                        label: "LinkedIn",
-                      },
-                    ].map((l) => (
+                  {(layer.variant === "contact" || layer.variant === "intro") && (
+                    <div style={{ marginTop: 22, display: "flex", flexWrap: "wrap", gap: 12 }}>
+                      <a href="mailto:amalr@andrew.cmu.edu" style={linkBtn}>
+                        amalr@andrew.cmu.edu
+                      </a>
                       <a
-                        key={l.href}
-                        href={l.href}
+                        href="https://www.linkedin.com/in/amal-ray-577a69175/"
                         target="_blank"
                         rel="noreferrer"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 10,
-                          padding: "12px 24px",
-                          border: "1px solid rgba(255,255,255,0.4)",
-                          fontFamily: "'Space Grotesk', sans-serif",
-                          fontSize: 14,
-                          fontWeight: 500,
-                          letterSpacing: "0.03em",
-                          color: "#f0ede8",
-                          background: "transparent",
-                          textDecoration: "none",
-                        }}
+                        style={linkBtn}
                       >
-                        {l.label}
+                        LinkedIn
                       </a>
-                    ))}
-                  </div>
-                )}
+                    </div>
+                  )}
 
-                {layer.tags.length > 0 && (
-                  <div
-                    style={{
-                      marginTop: 16,
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: 8,
-                    }}
-                  >
-                    {layer.tags.map((t) => (
-                      <span
-                        key={t}
-                        style={{
-                          padding: "4px 10px",
-                          border: "1px solid rgba(255,255,255,0.15)",
-                          fontFamily: "'Space Grotesk', sans-serif",
-                          fontWeight: 500,
-                          fontSize: 10,
-                          letterSpacing: "0.08em",
-                          textTransform: "uppercase",
-                          color: "rgba(240,237,232,0.6)",
-                        }}
-                      >
-                        {t}
-                      </span>
-                    ))}
+                  <div style={{ height: 8 }} />
+                </div>
+
+                {/* Footer (fixed): tags + nav */}
+                <div
+                  className="relative flex-none px-8 pb-5 pt-4"
+                  style={{ borderTop: "1px solid rgba(255,255,255,0.09)" }}
+                >
+                  {layer.tags.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 14 }}>
+                      {layer.tags.map((t) => (
+                        <span
+                          key={t}
+                          style={{
+                            padding: "3px 9px",
+                            border: "1px solid rgba(255,255,255,0.22)",
+                            fontFamily: "'Space Grotesk', sans-serif",
+                            fontWeight: 500,
+                            fontSize: 10,
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            color: "rgba(240,237,232,0.55)",
+                          }}
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={goPrev}
+                      className="pov-nav pov-nav-prev"
+                      aria-label={`Previous: ${shortLabel(prev)}`}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: 0,
+                        textAlign: "left",
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: 12,
+                        letterSpacing: "0.04em",
+                        color: "rgba(240,237,232,0.55)",
+                      }}
+                    >
+                      <span className="pov-arrow">‹</span> {shortLabel(prev)}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      className="pov-nav pov-nav-next"
+                      aria-label={`Next: ${shortLabel(next)}`}
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: 0,
+                        textAlign: "right",
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: 12,
+                        letterSpacing: "0.04em",
+                        color: "rgba(240,237,232,0.55)",
+                      }}
+                    >
+                      {shortLabel(next)} <span className="pov-arrow">›</span>
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             </motion.div>
           </AnimatePresence>
