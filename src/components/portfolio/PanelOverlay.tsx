@@ -167,7 +167,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
     margin: "-14px -16px",
     minHeight: 48,
     fontFamily: "'Space Grotesk', sans-serif",
-    fontSize: isMobile ? 15 : 12,
+    fontSize: isMobile ? 16 : 12,
     letterSpacing: "0.04em",
     color: "rgba(240,237,232,0.55)",
   } as const;
@@ -324,7 +324,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
                         fontWeight: 500,
-                        fontSize: isMobile ? 14 : 11,
+                        fontSize: isMobile ? 16 : 11,
                         letterSpacing: "0.1em",
                         textTransform: "uppercase",
                         color: "rgba(240,237,232,0.6)",
@@ -347,7 +347,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       <span
                         style={{
                           fontFamily: "'Space Grotesk', sans-serif",
-                          fontSize: isMobile ? 14 : 11,
+                          fontSize: isMobile ? 16 : 11,
                           letterSpacing: "0.16em",
                           color: "rgba(240,237,232,0.4)",
                         }}
@@ -418,8 +418,8 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                         style={{
                           fontSize: isMobile
                             ? isLede && i === 0
-                              ? 22
-                              : 20
+                              ? 26
+                              : 24
                             : isLede && i === 0
                               ? 19
                               : 17,
@@ -495,7 +495,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                             border: "1px solid rgba(255,255,255,0.22)",
                             fontFamily: "'Space Grotesk', sans-serif",
                             fontWeight: 500,
-                            fontSize: isMobile ? 13 : 10,
+                            fontSize: isMobile ? 14 : 10,
                             letterSpacing: "0.08em",
                             textTransform: "uppercase",
                             color: "rgba(240,237,232,0.55)",
