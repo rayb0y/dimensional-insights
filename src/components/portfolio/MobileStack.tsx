@@ -52,7 +52,7 @@ function CardFace({ layer }: { layer: Layer }) {
         }}
       />
 
-      <div className="flex items-start px-7 pt-7">
+      <div className="relative flex items-start px-7 pt-7" style={{ zIndex: 1 }}>
         <span
           className="inline-flex items-center"
           style={{
@@ -61,18 +61,27 @@ function CardFace({ layer }: { layer: Layer }) {
             fontSize: "clamp(15px, 3.8vw, 19px)",
             letterSpacing: "0.08em",
             textTransform: "uppercase",
-            color: "rgba(240,237,232,0.9)",
+            color: "#f0ede8",
+            textShadow: "0 1px 2px rgba(0,0,0,0.35)",
           }}
         >
           <span
             aria-hidden
-            style={{ width: 8, height: 8, borderRadius: 999, background: accent, marginRight: 12, flex: "none" }}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 999,
+              background: "#f0ede8",
+              marginRight: 12,
+              flex: "none",
+              boxShadow: "0 0 0 2px rgba(0,0,0,0.2)",
+            }}
           />
           {layer.label}
         </span>
       </div>
       <div className="flex-1" />
-      <div className="px-7 pb-8">
+      <div className="relative px-7 pb-8" style={{ zIndex: 1 }}>
         <h2
           style={{
             fontFamily: "'Syne', sans-serif",
@@ -82,11 +91,13 @@ function CardFace({ layer }: { layer: Layer }) {
             letterSpacing: "-0.015em",
             color: "#f0ede8",
             textWrap: "balance",
+            textShadow: "0 2px 20px rgba(0,0,0,0.4)",
           }}
         >
           {layer.title}
         </h2>
       </div>
+
     </div>
   );
 }
