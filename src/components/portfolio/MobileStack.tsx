@@ -354,7 +354,10 @@ export function MobileStack(_props: Props) {
           </div>
         )}
 
-        <div className="relative mt-20" style={{ width: "84vw", height: "56vh", marginLeft: 18 }}>
+        <div
+          className="relative mt-16"
+          style={{ width: "min(94vw, 460px)", height: "min(70vh, 640px)" }}
+        >
           {visible.map((idx, depth) => (
             <StackCard
               key={layers[idx].id}
@@ -365,9 +368,12 @@ export function MobileStack(_props: Props) {
               onTap={scrollToDetails}
               nudge={depth === 0 ? nudge : undefined}
               reduce={reduce}
+              entering={entering}
+              totalVisible={visible.length}
             />
           ))}
         </div>
+
 
         <button
           type="button"
