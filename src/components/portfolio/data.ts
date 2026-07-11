@@ -27,7 +27,7 @@ export const layers: Layer[] = [
     id: "intro",
     accent: ACCENT.neutral,
     label: "Amal Ray",
-    eyebrow: "CMU Integrated Innovation Institute  ·  EY  ·  Pittsburgh",
+    eyebrow: "CMU Integrated Innovation Institute  ·  EY",
     title: "What's next?",
     paragraphs: [
       "I am a product strategist. I work upstream of the build, deciding what is worth making, framing the problem, and turning ambiguity into a decision a team can act on. Three years doing it inside an enterprise at EY, now doing it at the frontier of AI at CMU.",
@@ -113,7 +113,7 @@ export const layers: Layer[] = [
       "CMU  ·  Managing Products & Brands  ·  Jan–Mar 2026  ·  Strategy Lead, Udyamini / SwitchON Foundation",
     title: "Creating a Hero Brand in West Bengal",
     paragraphs: [
-      "Rural women entrepreneurs in West Bengal make real, quality goods, but they stay invisible to mainstream retail. The usual narrative frames them as beneficiaries. We treated that as the wrong frame and built a brand around a different one.",
+      "Rural women entrepreneurs in West Bengal make real, quality goods, but they stay invisible to mainstream retail. The usual narrative frames them as beneficiaries. We built the brand around a different frame instead, placing the maker at the center.",
       "Working with SwitchON Foundation and its Udyamini program, we developed Mool, a hero brand that places the rural woman as the celebrated maker rather than a footnote. The strategy covered naming, visual identity, brand story, and a go-to-market framework built around the constraints of rural distribution and low-digital-literacy markets. The decision that mattered most was the framing: not what we built, but the story we told about who built it.",
     ],
     insight: "The hard part was the story we told, not the product.",
