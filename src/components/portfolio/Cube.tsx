@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { layers } from "./data";
 import { Panel } from "./Panel";
@@ -78,18 +79,26 @@ export function Cube({ onOpen }: Props) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center overflow-hidden">
-      {/* Yellow glow emanating from the centre of the cube */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{
-          width: 900,
-          height: 900,
-          background: `radial-gradient(circle at center, ${glowColor}73 0%, ${glowColor}2e 25%, ${glowColor}0d 50%, ${glowColor}00 70%)`,
-          filter: "blur(20px)",
-          transition: "background 450ms ease",
-        }}
-      />
+      {/* Glow emanating from the centre of the cube, cross-fading between accents */}
+      <AnimatePresence>
+        <motion.div
+          key={glowColor}
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          style={{
+            width: 900,
+            height: 900,
+            transform: "translate(-50%, -50%)",
+            background: `radial-gradient(circle at center, ${glowColor}73 0%, ${glowColor}2e 25%, ${glowColor}0d 50%, ${glowColor}00 70%)`,
+            filter: "blur(20px)",
+            willChange: "opacity",
+          }}
+        />
+      </AnimatePresence>
 
       <div style={{ perspective: "1400px", perspectiveOrigin: "50% 50%" }}>
         <div style={{ animation: "float-bob 6s ease-in-out infinite" }}>

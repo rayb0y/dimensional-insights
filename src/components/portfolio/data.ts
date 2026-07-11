@@ -70,7 +70,9 @@ export const layers: Layer[] = [
     eyebrow: "CMU  ·  IPD Capstone  ·  Industry Client  ·  Jan–Apr 2026",
     title: "Deciding what to build before building it",
     paragraphs: [
-      "For a major industry client, I spent four months answering the question that sits upstream of engineering and go-to-market: what is worth building. The work was a structured discovery held to three tests at once: what users need, what is technically feasible, and what the business can sustain. I led the primary research, ran the engineering feasibility analysis, built the competitive positioning, and helped deliver the resulting product strategy to client leadership. The deliverable was a reasoned recommendation for what the client should build next. The work is under NDA, so the specifics stay with the client.",
+      "Canon was the industry client for my CMU capstone, and the brief was the question that sits upstream of engineering and go-to-market: what is worth building. Over four months I ran a structured discovery to answer it, held to three tests at once: what users actually need, what is technically feasible, and what the business can sustain.",
+      "I led the primary research, interviewing users and mapping where the real needs were, then ran an engineering feasibility analysis to pressure-test the hard technical assumptions before anyone committed to them. I worked the competitive positioning to see where Canon could win, and pulled the three lenses together into a single product strategy delivered to Canon's leadership.",
+      "The deliverable was not a prototype. It was a reasoned answer to what Canon should build next and why. The specifics stay with the client under NDA, but the shape of the work, deciding what to build before building it, is the part that matters most to me.",
     ],
     tags: [
       "Product Strategy",
