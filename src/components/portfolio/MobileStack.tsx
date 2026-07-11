@@ -240,12 +240,15 @@ export function MobileStack(_props: Props) {
   };
   const advance = () => {
     markSwiped();
+    setHasInteracted(true);
     setOrder((o) => [...o.slice(1), o[0]]);
   };
   const retreat = () => {
     markSwiped();
+    setHasInteracted(true);
     setOrder((o) => [o[o.length - 1], ...o.slice(0, o.length - 1)]);
   };
+
   const scrollToDetails = () =>
     detailsRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 
