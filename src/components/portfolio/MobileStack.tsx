@@ -46,10 +46,10 @@ function CardFace({ layer, dim, bare }: { layer: Layer; dim?: boolean; bare?: bo
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 600,
-                fontSize: 13,
-                letterSpacing: "0.12em",
+                fontSize: 18,
+                letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                color: "rgba(240,237,232,0.82)",
+                color: "rgba(240,237,232,0.9)",
               }}
             >
               <span
@@ -233,10 +233,10 @@ export function MobileStack({ onOpen }: Props) {
         className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-center pt-6"
         style={{
           fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 12,
-          letterSpacing: "0.18em",
+          fontSize: 14,
+          letterSpacing: "0.16em",
           textTransform: "uppercase",
-          color: "rgba(240,237,232,0.4)",
+          color: "rgba(240,237,232,0.45)",
         }}
       >
         Swipe · Tap to open
