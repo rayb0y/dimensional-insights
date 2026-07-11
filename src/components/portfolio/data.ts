@@ -119,7 +119,7 @@ export const layers: Layer[] = [
       "CMU  ·  Integrated Product Development  ·  Aug–Dec 2025  ·  POGOH RideSafe",
     title: "Where a bike-share system breaks",
     paragraphs: [
-      "Cities invest heavily in bike sharing and still watch bikes sit unused. The friction usually lives in the ecosystem around the bikes: habits, infrastructure gaps, trust failures, and the small obstacles between a person and the decision to ride. Working with POGOH, we mapped stakeholders, observed riders in the field, and ran co-design sessions to find where effort would count most. That point was safety, perceived and actual. The RideSafe Program grew from that finding: signage, onboarding, and route confidence designed as one connected experience.",
+      "Cities invest heavily in bike sharing and still watch bikes sit unused. The friction usually lives in the ecosystem around the bikes: habits, infrastructure gaps, trust failures, and the small obstacles between a person and the decision to ride. Using Pittsburgh's POGOH system as the case study, we mapped stakeholders, observed riders in the field, and ran co-design sessions to find where effort would count most. That point was safety, perceived and actual. Our proposal, the RideSafe Program, grew from that finding: signage, onboarding, and route confidence designed as one connected experience.",
     ],
     tags: ["Systems Thinking", "Research", "Urban Innovation", "POGOH"],
   },
