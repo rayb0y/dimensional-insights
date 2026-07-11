@@ -378,8 +378,9 @@ export function MobileStack(_props: Props) {
         )}
 
         <div
-          className="relative mt-16"
-          style={{ width: "min(94vw, 460px)", height: "min(70vh, 640px)" }}
+          className="relative mt-10"
+          style={{ width: "min(96vw, 480px)", height: "min(78vh, 720px)" }}
+
         >
           {visible.map((idx, depth) => (
             <StackCard
