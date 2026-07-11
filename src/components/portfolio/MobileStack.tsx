@@ -200,7 +200,7 @@ function StackCard({
     </motion.div>
   );
 }
-}
+
 
 export function MobileStack(_props: Props) {
   const navigate = useNavigate();
