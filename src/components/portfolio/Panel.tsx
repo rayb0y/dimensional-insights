@@ -7,13 +7,14 @@ type Props = {
   total: number;
   isActive: boolean;
   onClick: (rect: DOMRect) => void;
+  onHover?: (accent: string | null) => void;
 };
 
 const PANEL_W = 440;
 const PANEL_H = 440;
 const Z_STEP = 36;
 
-export function Panel({ layer, index, total, onClick }: Props) {
+export function Panel({ layer, index, total, onClick, onHover }: Props) {
   const [hover, setHover] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
   const z = -((index - (total - 1) / 2) * Z_STEP);
@@ -25,8 +26,14 @@ export function Panel({ layer, index, total, onClick }: Props) {
       onClick={() => {
         if (ref.current) onClick(ref.current.getBoundingClientRect());
       }}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onMouseEnter={() => {
+        setHover(true);
+        onHover?.(layer.accent);
+      }}
+      onMouseLeave={() => {
+        setHover(false);
+        onHover?.(null);
+      }}
       className="group absolute left-1/2 top-1/2 text-left"
       style={{
         width: PANEL_W,

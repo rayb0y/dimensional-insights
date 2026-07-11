@@ -95,7 +95,7 @@ export const layers: Layer[] = [
   },
   {
     id: "mool",
-    accent: ACCENT.amber,
+    accent: ACCENT.ice,
     label: "Mool  ·  West Bengal",
     eyebrow:
       "CMU  ·  Managing Products & Brands  ·  Jan–Mar 2026  ·  Strategy Lead  ·  SwitchON Foundation",
@@ -113,7 +113,7 @@ export const layers: Layer[] = [
   },
   {
     id: "pogoh",
-    accent: ACCENT.acid,
+    accent: ACCENT.ice,
     label: "Urban Mobility  ·  POGOH",
     eyebrow:
       "CMU  ·  Integrated Product Development  ·  Aug–Dec 2025  ·  POGOH RideSafe",

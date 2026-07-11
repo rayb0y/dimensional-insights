@@ -19,6 +19,7 @@ export function Cube({ onOpen }: Props) {
   const targetRef = useRef(START_ROT);
   const currentRef = useRef(START_ROT);
   const [rotation, setRotation] = useState(START_ROT);
+  const [hoverAccent, setHoverAccent] = useState<string | null>(null);
   const total = layers.length;
 
   useEffect(() => {
@@ -73,6 +74,7 @@ export function Cube({ onOpen }: Props) {
 
   const degPerLayer = 360 / total;
   const activeIndex = ((Math.round(-rotation / degPerLayer) % total) + total) % total;
+  const glowColor = hoverAccent && hoverAccent.startsWith("#") ? hoverAccent : "#ffcc33";
 
   return (
     <div className="fixed inset-0 flex items-center justify-center overflow-hidden">
@@ -83,9 +85,9 @@ export function Cube({ onOpen }: Props) {
         style={{
           width: 900,
           height: 900,
-          background:
-            "radial-gradient(circle at center, rgba(255,204,51,0.45) 0%, rgba(255,204,51,0.18) 25%, rgba(255,204,51,0.05) 50%, rgba(255,204,51,0) 70%)",
+          background: `radial-gradient(circle at center, ${glowColor}73 0%, ${glowColor}2e 25%, ${glowColor}0d 50%, ${glowColor}00 70%)`,
           filter: "blur(20px)",
+          transition: "background 450ms ease",
         }}
       />
 
@@ -109,6 +111,7 @@ export function Cube({ onOpen }: Props) {
                 total={total}
                 isActive={i === activeIndex}
                 onClick={(rect) => onOpen(layer.id, rect)}
+                onHover={setHoverAccent}
               />
             ))}
           </div>
