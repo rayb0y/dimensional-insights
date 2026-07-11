@@ -17,10 +17,8 @@ function CardFace({ layer, dim }: { layer: Layer; dim?: boolean }) {
     <div
       className="relative flex h-full w-full flex-col overflow-hidden"
       style={{
-        borderRadius: 22,
+        borderRadius: 0,
         background: "rgba(255,255,255,0.045)",
-        border: "1px solid rgba(255,255,255,0.14)",
-        borderTop: `2px solid ${accent}`,
         backdropFilter: "blur(10px)",
         WebkitBackdropFilter: "blur(10px)",
         boxShadow: "0 30px 90px rgba(0,0,0,0.65)",
