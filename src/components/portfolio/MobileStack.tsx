@@ -208,6 +208,7 @@ export function MobileStack(_props: Props) {
   const [order, setOrder] = useState(() => layers.map((_, i) => i));
   const [showHint, setShowHint] = useState(false);
   const [nudge, setNudge] = useState(0);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const detailsRef = useRef<HTMLDivElement>(null);
   const deckRef = useRef<HTMLDivElement>(null);
   const [deckVisible, setDeckVisible] = useState(true);
@@ -216,6 +217,8 @@ export function MobileStack(_props: Props) {
   const accent = accentOf(active);
   const total = layers.length;
   const visible = order.slice(0, 4);
+  const entering = !hasInteracted;
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
