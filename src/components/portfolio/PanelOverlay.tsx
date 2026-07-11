@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   useEffect,
   useLayoutEffect,
@@ -40,7 +40,10 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [overflows, setOverflows] = useState(true);
+  const reduce = useReducedMotion();
+  const isOpen = activeId !== null;
 
   const index = activeId ? layers.findIndex((l) => l.id === activeId) : -1;
   const layer = index >= 0 ? layers[index] : null;
@@ -69,11 +72,37 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
       } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         e.preventDefault();
         goNext();
+      } else if (e.key === "Tab") {
+        const nodes = overlayRef.current?.querySelectorAll<HTMLElement>(
+          'button, a[href], [tabindex]:not([tabindex="-1"])',
+        );
+        if (!nodes || nodes.length === 0) return;
+        const list = Array.from(nodes);
+        const first = list[0];
+        const last = list[list.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [layer, index]);
+
+  // Focus the dialog on open; restore focus to the opener on close.
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.activeElement as HTMLElement | null;
+    const raf = requestAnimationFrame(() => overlayRef.current?.focus());
+    return () => {
+      cancelAnimationFrame(raf);
+      prev?.focus?.();
+    };
+  }, [isOpen]);
 
   // Decide poster (centered) vs scrolling (top-anchored) per card.
   useIsoLayoutEffect(() => {
@@ -147,7 +176,12 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
     <AnimatePresence>
       {layer && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-center justify-center p-0 sm:p-6"
+          ref={overlayRef}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-label={layer.title}
+          className="fixed inset-0 z-[70] flex items-center justify-center p-0 sm:p-6 outline-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -191,13 +225,19 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={layer.id}
-              initial={usedOrigin ? { opacity: 0, y: 24, scale: 0.985 } : zoomInitial}
-              animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
-              exit={usedOrigin ? { opacity: 0, y: -24, scale: 0.985 } : zoomInitial}
+              initial={
+                reduce ? { opacity: 0 } : usedOrigin ? { opacity: 0, y: 24, scale: 0.985 } : zoomInitial
+              }
+              animate={reduce ? { opacity: 1 } : { x: 0, y: 0, scale: 1, opacity: 1 }}
+              exit={
+                reduce ? { opacity: 0 } : usedOrigin ? { opacity: 0, y: -24, scale: 0.985 } : zoomInitial
+              }
               transition={
-                usedOrigin
-                  ? { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
-                  : { type: "spring", stiffness: 170, damping: 22 }
+                reduce
+                  ? { duration: 0.2 }
+                  : usedOrigin
+                    ? { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
+                    : { type: "spring", stiffness: 170, damping: 22 }
               }
               onMouseMove={onMove}
               onMouseLeave={() => setTilt({ rx: 0, ry: 0 })}

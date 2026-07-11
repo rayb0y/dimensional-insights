@@ -3,9 +3,10 @@ import {
   animate,
   motion,
   useMotionValue,
+  useReducedMotion,
   useTransform,
 } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { layers, type Layer } from "./data";
 
 type Props = {
@@ -45,7 +46,6 @@ function CardFace({ layer, dim, bare }: { layer: Layer; dim?: boolean; bare?: bo
 
       {!bare && (
         <>
-          {/* Header: label */}
           <div className="flex items-start px-7 pt-8">
             <span
               className="inline-flex items-center"
@@ -75,7 +75,6 @@ function CardFace({ layer, dim, bare }: { layer: Layer; dim?: boolean; bare?: bo
 
           <div className="flex-1" />
 
-          {/* Footer: eyebrow, title, tags, hint */}
           <div className="px-7 pb-9">
             <div
               style={{
@@ -86,6 +85,10 @@ function CardFace({ layer, dim, bare }: { layer: Layer; dim?: boolean; bare?: bo
                 color: "rgba(240,237,232,0.55)",
                 marginBottom: 14,
                 lineHeight: 1.5,
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
               }}
             >
               {layer.eyebrow}
@@ -149,12 +152,16 @@ function StackCard({
   isFront,
   onSwipe,
   onOpen,
+  nudge,
+  reduce,
 }: {
   layer: Layer;
   depth: number;
   isFront: boolean;
-  onSwipe: () => void;
+  onSwipe: (dir: number) => void;
   onOpen: (id: string, rect?: DOMRect) => void;
+  nudge?: number;
+  reduce?: boolean | null;
 }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-240, 240], [-7, 7]);
@@ -162,6 +169,16 @@ function StackCard({
   const moved = useRef(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const open = () => onOpen(layer.id, cardRef.current?.getBoundingClientRect());
+
+  useEffect(() => {
+    if (!nudge || reduce) return;
+    const controls = animate(x, [0, -16, 0], {
+      duration: 0.7,
+      times: [0, 0.35, 1],
+      ease: "easeInOut",
+    });
+    return () => controls.stop();
+  }, [nudge]);
 
   if (!isFront) {
     return (
@@ -205,9 +222,14 @@ function StackCard({
         if (Math.abs(power) > 100) {
           moved.current = true;
           const dir = power > 0 ? 1 : -1;
-          const w = typeof window !== "undefined" ? window.innerWidth : 400;
-          animate(x, dir * w * 1.25, { duration: 0.28, ease: "easeIn" });
-          window.setTimeout(onSwipe, 240);
+          if (reduce) {
+            x.set(0);
+            onSwipe(dir);
+          } else {
+            const w = typeof window !== "undefined" ? window.innerWidth : 400;
+            animate(x, dir * w * 1.25, { duration: 0.28, ease: "easeIn" });
+            window.setTimeout(() => onSwipe(dir), 240);
+          }
         } else {
           animate(x, 0, { type: "spring", stiffness: 320, damping: 30 });
         }
@@ -223,11 +245,48 @@ function StackCard({
 }
 
 export function MobileStack({ onOpen }: Props) {
+  const reduce = useReducedMotion();
   const [order, setOrder] = useState(() => layers.map((_, i) => i));
+  const [showHint, setShowHint] = useState(false);
+  const [nudge, setNudge] = useState(0);
   const total = layers.length;
   const frontLayer = layers[order[0]];
-  const advance = () => setOrder((o) => [...o.slice(1), o[0]]);
   const visible = order.slice(0, 3);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (!window.localStorage.getItem("swipedOnce")) setShowHint(true);
+    } catch {
+      setShowHint(true);
+    }
+  }, []);
+
+  const markSwiped = () => {
+    if (!showHint) return;
+    setShowHint(false);
+    try {
+      window.localStorage.setItem("swipedOnce", "1");
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const advance = () => {
+    markSwiped();
+    setOrder((o) => [...o.slice(1), o[0]]);
+  };
+  const retreat = () => {
+    markSwiped();
+    setOrder((o) => [o[o.length - 1], ...o.slice(0, o.length - 1)]);
+  };
+
+  // Idle nudge to teach the swipe, only until the first swipe.
+  useEffect(() => {
+    if (!showHint || reduce) return;
+    const t = window.setTimeout(() => setNudge((n) => n + 1), 1500);
+    return () => window.clearTimeout(t);
+  }, [showHint, reduce, order]);
 
   return (
     <div
@@ -254,19 +313,21 @@ export function MobileStack({ onOpen }: Props) {
         />
       </AnimatePresence>
 
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-center"
-        style={{
-          paddingTop: "calc(env(safe-area-inset-top, 0px) + 20px)",
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 14,
-          letterSpacing: "0.16em",
-          textTransform: "uppercase",
-          color: "rgba(240,237,232,0.45)",
-        }}
-      >
-        Swipe · Tap to open
-      </div>
+      {showHint && (
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-center"
+          style={{
+            paddingTop: "calc(env(safe-area-inset-top, 0px) + 20px)",
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 14,
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            color: "rgba(240,237,232,0.45)",
+          }}
+        >
+          Swipe · Tap to open
+        </div>
+      )}
 
       <div className="relative" style={{ width: "88vw", height: "76vh" }}>
         {visible.map((idx, depth) => (
@@ -275,8 +336,10 @@ export function MobileStack({ onOpen }: Props) {
             layer={layers[idx]}
             depth={depth}
             isFront={depth === 0}
-            onSwipe={advance}
+            onSwipe={(dir) => (dir < 0 ? advance() : retreat())}
             onOpen={onOpen}
+            nudge={depth === 0 ? nudge : undefined}
+            reduce={reduce}
           />
         ))}
       </div>
