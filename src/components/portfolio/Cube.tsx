@@ -6,6 +6,8 @@ import { Panel } from "./Panel";
 // range; scrolling stops here so you can't spin it all the way around.
 const MIN_ROT = -55;
 const MAX_ROT = 55;
+// Rotation the site opens at — already fanned out, not the flat 0deg stack.
+const START_ROT = 45;
 const clampRot = (v: number) => Math.max(MIN_ROT, Math.min(MAX_ROT, v));
 
 type Props = {
@@ -14,9 +16,9 @@ type Props = {
 
 
 export function Cube({ onOpen }: Props) {
-  const targetRef = useRef(0);
-  const currentRef = useRef(0);
-  const [rotation, setRotation] = useState(0);
+  const targetRef = useRef(START_ROT);
+  const currentRef = useRef(START_ROT);
+  const [rotation, setRotation] = useState(START_ROT);
   const total = layers.length;
 
   useEffect(() => {
