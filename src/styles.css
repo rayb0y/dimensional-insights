@@ -99,6 +99,11 @@
   100% { opacity: 0; transform: translateX(220%) skewX(-20deg); }
 }
 
+@keyframes panel-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @keyframes pulse-fade {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.9; }

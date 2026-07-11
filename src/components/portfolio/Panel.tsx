@@ -39,7 +39,8 @@ export function Panel({ layer, index, total, onClick }: Props) {
         WebkitBackdropFilter: "blur(4px)",
         boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
         willChange: "transform",
-        animation: `shimmer-sweep 1.2s ease-out ${index * 0.08}s 1`,
+        opacity: 0,
+        animation: `panel-in 0.5s ease-out ${(index === 0 ? total : index - 1) * 0.16}s forwards`,
       }}
     >
       {/* Top label */}
