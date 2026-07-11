@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { Layer } from "./data";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -28,6 +28,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
   const isMobile = useIsMobile();
   const [usedOrigin, setUsedOrigin] = useState(false);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const index = activeId ? layers.findIndex((l) => l.id === activeId) : -1;
   const layer = index >= 0 ? layers[index] : null;
@@ -110,7 +111,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
     <AnimatePresence>
       {layer && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-0 sm:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -159,13 +160,27 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
               onMouseLeave={() => setTilt({ rx: 0, ry: 0 })}
               className="relative z-10"
               style={{
-                width: isMobile ? "92vw" : CARD,
-                height: isMobile ? "min(82vh, 720px)" : CARD,
+                width: isMobile ? "100vw" : CARD,
+                height: isMobile ? "100dvh" : CARD,
                 perspective: 1400,
               }}
             >
               <div
                 className="pov-active relative flex h-full flex-col overflow-hidden"
+                onTouchStart={(e) => {
+                  touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }}
+                onTouchEnd={(e) => {
+                  const s = touchStart.current;
+                  touchStart.current = null;
+                  if (!s) return;
+                  const dx = e.changedTouches[0].clientX - s.x;
+                  const dy = e.changedTouches[0].clientY - s.y;
+                  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+                    if (dx < 0) goNext();
+                    else goPrev();
+                  }
+                }}
                 style={{
                   transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
                   transformStyle: "preserve-3d",
@@ -208,17 +223,20 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                 />
 
                 {/* Header (fixed) */}
-                <div className="relative flex-none px-8 pt-6">
+                <div
+                  className="relative flex-none px-8"
+                  style={{ paddingTop: isMobile ? "calc(env(safe-area-inset-top, 0px) + 22px)" : 24 }}
+                >
                   <div className="flex items-start justify-between gap-4">
                     <span
                       className="inline-flex items-center"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
                         fontWeight: 500,
-                        fontSize: 11,
-                        letterSpacing: "0.12em",
+                        fontSize: isMobile ? 14 : 11,
+                        letterSpacing: "0.1em",
                         textTransform: "uppercase",
-                        color: "rgba(240,237,232,0.55)",
+                        color: "rgba(240,237,232,0.6)",
                       }}
                     >
                       <span
@@ -238,7 +256,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       <span
                         style={{
                           fontFamily: "'Space Grotesk', sans-serif",
-                          fontSize: 11,
+                          fontSize: isMobile ? 13 : 11,
                           letterSpacing: "0.16em",
                           color: "rgba(240,237,232,0.4)",
                         }}
@@ -261,7 +279,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                     style={{
                       fontFamily: "'Syne', sans-serif",
                       fontWeight: 700,
-                      fontSize: "clamp(26px, 4.6vmin, 42px)",
+                      fontSize: isMobile ? "clamp(32px, 8.5vw, 46px)" : "clamp(26px, 4.6vmin, 42px)",
                       lineHeight: 1.08,
                       letterSpacing: "-0.01em",
                       color: "#f0ede8",
@@ -299,7 +317,13 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       <p
                         key={i}
                         style={{
-                          fontSize: isLede && i === 0 ? 19 : 17,
+                          fontSize: isMobile
+                            ? isLede && i === 0
+                              ? 22
+                              : 20
+                            : isLede && i === 0
+                              ? 19
+                              : 17,
                           lineHeight: 1.65,
                           color:
                             isLede && i === 0
@@ -365,11 +389,11 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                         <span
                           key={t}
                           style={{
-                            padding: "3px 9px",
+                            padding: isMobile ? "4px 11px" : "3px 9px",
                             border: "1px solid rgba(255,255,255,0.22)",
                             fontFamily: "'Space Grotesk', sans-serif",
                             fontWeight: 500,
-                            fontSize: 10,
+                            fontSize: isMobile ? 12 : 10,
                             letterSpacing: "0.08em",
                             textTransform: "uppercase",
                             color: "rgba(240,237,232,0.55)",
@@ -394,7 +418,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                         padding: 0,
                         textAlign: "left",
                         fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: 12,
+                        fontSize: isMobile ? 14 : 12,
                         letterSpacing: "0.04em",
                         color: "rgba(240,237,232,0.55)",
                       }}
@@ -413,7 +437,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                         padding: 0,
                         textAlign: "right",
                         fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: 12,
+                        fontSize: isMobile ? 14 : 12,
                         letterSpacing: "0.04em",
                         color: "rgba(240,237,232,0.55)",
                       }}
