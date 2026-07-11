@@ -20,11 +20,13 @@ export function Portfolio() {
     <div className="relative h-screen w-screen overflow-hidden bg-void text-text-primary">
       <Grain />
 
-      {isMobile ? (
-        <MobileStack onOpen={(id) => handleOpen(id)} />
-      ) : (
-        <Cube onOpen={(id, rect) => handleOpen(id, rect)} />
-      )}
+      <div style={{ visibility: isMobile && activeId ? "hidden" : "visible" }}>
+        {isMobile ? (
+          <MobileStack onOpen={(id, rect) => handleOpen(id, rect)} />
+        ) : (
+          <Cube onOpen={(id, rect) => handleOpen(id, rect)} />
+        )}
+      </div>
 
       <PanelOverlay
         layers={layers}

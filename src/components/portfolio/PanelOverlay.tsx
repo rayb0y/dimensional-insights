@@ -1,5 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { Layer } from "./data";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -14,6 +20,10 @@ type Props = {
 
 const SIZE = 760;
 const CARD = "min(760px, 92vmin)";
+const FADE =
+  "linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%)";
+
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const NOISE =
   "data:image/svg+xml;utf8," +
@@ -29,6 +39,8 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
   const [usedOrigin, setUsedOrigin] = useState(false);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [overflows, setOverflows] = useState(true);
 
   const index = activeId ? layers.findIndex((l) => l.id === activeId) : -1;
   const layer = index >= 0 ? layers[index] : null;
@@ -63,17 +75,28 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
     return () => window.removeEventListener("keydown", onKey);
   }, [layer, index]);
 
+  // Decide poster (centered) vs scrolling (top-anchored) per card.
+  useIsoLayoutEffect(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+    const check = () => setOverflows(el.scrollHeight > el.clientHeight + 24);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [activeId, isMobile]);
+
   const target =
     typeof window !== "undefined"
       ? { cx: window.innerWidth / 2, cy: window.innerHeight / 2 }
-      : { cx: 0, cy: 0 };
+      : { cx: 200, cy: 400 };
 
   const zoomInitial =
     originRect && !usedOrigin
       ? {
           x: originRect.left + originRect.width / 2 - target.cx,
           y: originRect.top + originRect.height / 2 - target.cy,
-          scale: originRect.width / SIZE,
+          scale: originRect.width / (isMobile ? target.cx * 2 : SIZE),
           opacity: 1,
         }
       : { x: 0, y: 30, scale: 0.98, opacity: 0 };
@@ -95,7 +118,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
     display: "inline-flex",
     alignItems: "center",
     gap: 10,
-    padding: "11px 22px",
+    padding: "12px 22px",
     border: "1px solid rgba(255,255,255,0.35)",
     fontFamily: "'Space Grotesk', sans-serif",
     fontSize: 13,
@@ -105,6 +128,19 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
     background: "transparent",
     textDecoration: "none",
     cursor: "pointer",
+  } as const;
+
+  const navBtn = {
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    padding: "14px 16px",
+    margin: "-14px -16px",
+    minHeight: 48,
+    fontFamily: "'Space Grotesk', sans-serif",
+    fontSize: isMobile ? 14 : 12,
+    letterSpacing: "0.04em",
+    color: "rgba(240,237,232,0.55)",
   } as const;
 
   return (
@@ -125,25 +161,32 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
             className="absolute inset-0"
             onClick={onClose}
             style={{
-              background: "rgba(0,0,0,0.8)",
-              backdropFilter: "blur(14px)",
-              WebkitBackdropFilter: "blur(14px)",
+              background: isMobile ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.8)",
+              backdropFilter: isMobile ? undefined : "blur(14px)",
+              WebkitBackdropFilter: isMobile ? undefined : "blur(14px)",
             }}
           />
 
-          {/* Accent-shifted ambient glow behind the card */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2"
-            style={{
-              width: 820,
-              height: 820,
-              transform: "translate(-50%, -50%)",
-              background: `radial-gradient(circle at center, ${accent}44 0%, ${accent}14 34%, rgba(255,204,51,0.04) 55%, transparent 72%)`,
-              filter: "blur(28px)",
-              transition: "background 400ms ease",
-            }}
-          />
+          {/* Accent glow behind the card, cross-fading via opacity (cheap) */}
+          <AnimatePresence>
+            <motion.div
+              key={accent}
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-1/2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              style={{
+                width: 820,
+                height: 820,
+                transform: "translate(-50%, -50%)",
+                background: `radial-gradient(circle at center, ${accent}44 0%, ${accent}14 34%, ${accent}0a 55%, transparent 72%)`,
+                filter: "blur(28px)",
+                willChange: "opacity",
+              }}
+            />
+          </AnimatePresence>
 
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -168,7 +211,8 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
               <div
                 className="pov-active relative flex h-full flex-col overflow-hidden"
                 onTouchStart={(e) => {
-                  touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                  const t = e.touches[0];
+                  touchStart.current = t.clientX < 24 ? null : { x: t.clientX, y: t.clientY };
                 }}
                 onTouchEnd={(e) => {
                   const s = touchStart.current;
@@ -179,6 +223,12 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                   if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) {
                     if (dx < 0) goNext();
                     else goPrev();
+                  } else if (
+                    dy > 80 &&
+                    dy > Math.abs(dx) * 1.4 &&
+                    (bodyRef.current?.scrollTop ?? 0) <= 0
+                  ) {
+                    onClose();
                   }
                 }}
                 style={{
@@ -222,7 +272,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                   }}
                 />
 
-                {/* Header (fixed) */}
+                {/* Header (fixed): eyebrow, index, close */}
                 <div
                   className="relative flex-none px-8"
                   style={{ paddingTop: isMobile ? "calc(env(safe-area-inset-top, 0px) + 22px)" : 24 }}
@@ -233,7 +283,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
                         fontWeight: 500,
-                        fontSize: isMobile ? 14 : 11,
+                        fontSize: isMobile ? 13 : 11,
                         letterSpacing: "0.1em",
                         textTransform: "uppercase",
                         color: "rgba(240,237,232,0.6)",
@@ -252,7 +302,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       />
                       {layer.eyebrow}
                     </span>
-                    <div className="flex flex-none items-center gap-3">
+                    <div className="flex flex-none items-center gap-2">
                       <span
                         style={{
                           fontFamily: "'Space Grotesk', sans-serif",
@@ -268,40 +318,47 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                         onClick={onClose}
                         aria-label="Close"
                         className="text-text-muted transition-colors hover:text-text-primary"
-                        style={{ fontSize: 22, lineHeight: 1 }}
+                        style={{ fontSize: 22, lineHeight: 1, padding: 12, margin: -12 }}
                       >
                         ×
                       </button>
                     </div>
                   </div>
+                </div>
 
+                {/* Body: poster (centered) when it fits, scrolling when it overflows */}
+                <div
+                  ref={bodyRef}
+                  className="pov-scroll relative flex-1 overflow-y-auto px-8"
+                  style={{
+                    minHeight: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: overflows ? "flex-start" : "center",
+                    paddingTop: overflows ? 20 : 0,
+                    paddingBottom: 8,
+                    ...(overflows ? { maskImage: FADE, WebkitMaskImage: FADE } : {}),
+                  }}
+                >
                   <h2
                     style={{
                       fontFamily: "'Syne', sans-serif",
                       fontWeight: 700,
-                      fontSize: isMobile ? "clamp(32px, 8.5vw, 46px)" : "clamp(26px, 4.6vmin, 42px)",
-                      lineHeight: 1.08,
+                      fontSize: isMobile
+                        ? overflows
+                          ? "clamp(32px, 8.5vw, 46px)"
+                          : "clamp(38px, 10.5vw, 54px)"
+                        : "clamp(26px, 4.6vmin, 42px)",
+                      lineHeight: 1.06,
                       letterSpacing: "-0.01em",
                       color: "#f0ede8",
-                      marginTop: 16,
                       maxWidth: "18ch",
+                      marginBottom: 20,
                     }}
                   >
                     {layer.title}
                   </h2>
-                </div>
 
-                {/* Body (scrolls) */}
-                <div
-                  className="pov-scroll relative flex-1 overflow-y-auto px-8 pt-6"
-                  style={{
-                    minHeight: 0,
-                    maskImage:
-                      "linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%)",
-                    WebkitMaskImage:
-                      "linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%)",
-                  }}
-                >
                   <div
                     style={{
                       display: "flex",
@@ -319,8 +376,8 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                         style={{
                           fontSize: isMobile
                             ? isLede && i === 0
-                              ? 22
-                              : 20
+                              ? 20
+                              : 18
                             : isLede && i === 0
                               ? 19
                               : 17,
@@ -374,14 +431,17 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       </a>
                     </div>
                   )}
-
-                  <div style={{ height: 8 }} />
                 </div>
 
                 {/* Footer (fixed): tags + nav */}
                 <div
-                  className="relative flex-none px-8 pb-5 pt-4"
-                  style={{ borderTop: "1px solid rgba(255,255,255,0.09)" }}
+                  className="relative flex-none px-8 pt-4"
+                  style={{
+                    borderTop: "1px solid rgba(255,255,255,0.09)",
+                    paddingBottom: isMobile
+                      ? "calc(18px + env(safe-area-inset-bottom, 0px))"
+                      : 20,
+                  }}
                 >
                   {layer.tags.length > 0 && (
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 14 }}>
@@ -411,17 +471,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       onClick={goPrev}
                       className="pov-nav pov-nav-prev"
                       aria-label={`Previous: ${shortLabel(prev)}`}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        padding: 0,
-                        textAlign: "left",
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: isMobile ? 14 : 12,
-                        letterSpacing: "0.04em",
-                        color: "rgba(240,237,232,0.55)",
-                      }}
+                      style={{ ...navBtn, textAlign: "left" }}
                     >
                       <span className="pov-arrow">‹</span> {shortLabel(prev)}
                     </button>
@@ -430,17 +480,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       onClick={goNext}
                       className="pov-nav pov-nav-next"
                       aria-label={`Next: ${shortLabel(next)}`}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        padding: 0,
-                        textAlign: "right",
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: isMobile ? 14 : 12,
-                        letterSpacing: "0.04em",
-                        color: "rgba(240,237,232,0.55)",
-                      }}
+                      style={{ ...navBtn, textAlign: "right" }}
                     >
                       {shortLabel(next)} <span className="pov-arrow">›</span>
                     </button>

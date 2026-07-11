@@ -1,9 +1,15 @@
-import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 import { useRef, useState } from "react";
 import { layers, type Layer } from "./data";
 
 type Props = {
-  onOpen: (id: string) => void;
+  onOpen: (id: string, rect?: DOMRect) => void;
 };
 
 const glowStops = (accent: string) => {
@@ -18,9 +24,9 @@ function CardFace({ layer, dim, bare }: { layer: Layer; dim?: boolean; bare?: bo
       className="relative flex h-full w-full flex-col overflow-hidden"
       style={{
         borderRadius: 0,
-        background: "rgba(255,255,255,0.05)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
+        background: dim ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.05)",
+        backdropFilter: dim ? undefined : "blur(12px)",
+        WebkitBackdropFilter: dim ? undefined : "blur(12px)",
         boxShadow: "0 30px 90px rgba(0,0,0,0.65)",
         opacity: dim ? 0.92 : 1,
       }}
@@ -148,12 +154,14 @@ function StackCard({
   depth: number;
   isFront: boolean;
   onSwipe: () => void;
-  onOpen: (id: string) => void;
+  onOpen: (id: string, rect?: DOMRect) => void;
 }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-240, 240], [-7, 7]);
   const opacity = useTransform(x, [-320, -160, 0, 160, 320], [0, 1, 1, 1, 0]);
   const moved = useRef(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const open = () => onOpen(layer.id, cardRef.current?.getBoundingClientRect());
 
   if (!isFront) {
     return (
@@ -170,12 +178,22 @@ function StackCard({
 
   return (
     <motion.div
+      ref={cardRef}
+      role="button"
+      tabIndex={0}
+      aria-label={`Open ${layer.title}`}
       className="absolute inset-0"
       style={{ x, rotate, opacity, zIndex: 20, touchAction: "pan-y", cursor: "grab" }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.75}
       whileTap={{ cursor: "grabbing" }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          open();
+        }
+      }}
       onDragStart={() => {
         moved.current = false;
       }}
@@ -196,7 +214,7 @@ function StackCard({
       }}
       onTap={() => {
         if (moved.current) return;
-        onOpen(layer.id);
+        open();
       }}
     >
       <CardFace layer={layer} />
@@ -216,22 +234,30 @@ export function MobileStack({ onOpen }: Props) {
       className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden"
       style={{ background: "#07070f", touchAction: "pan-y" }}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2"
-        style={{
-          width: "160vw",
-          height: "160vw",
-          transform: "translate(-50%, -50%)",
-          background: `radial-gradient(circle at center, ${glowStops(frontLayer.accent)})`,
-          filter: "blur(30px)",
-          transition: "background 420ms ease",
-        }}
-      />
+      <AnimatePresence>
+        <motion.div
+          key={frontLayer.accent}
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.42 }}
+          style={{
+            width: "160vw",
+            height: "160vw",
+            transform: "translate(-50%, -50%)",
+            background: `radial-gradient(circle at center, ${glowStops(frontLayer.accent)})`,
+            filter: "blur(30px)",
+            willChange: "opacity",
+          }}
+        />
+      </AnimatePresence>
 
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-center pt-6"
+        className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-center"
         style={{
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 20px)",
           fontFamily: "'Space Grotesk', sans-serif",
           fontSize: 14,
           letterSpacing: "0.16em",
@@ -256,8 +282,9 @@ export function MobileStack({ onOpen }: Props) {
       </div>
 
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center pb-6"
+        className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center"
         style={{
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)",
           fontFamily: "'Space Grotesk', sans-serif",
           fontSize: 12,
           letterSpacing: "0.16em",
