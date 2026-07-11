@@ -185,6 +185,8 @@ export function MobileStack(_props: Props) {
   const [showHint, setShowHint] = useState(false);
   const [nudge, setNudge] = useState(0);
   const detailsRef = useRef<HTMLDivElement>(null);
+  const deckRef = useRef<HTMLDivElement>(null);
+  const [deckVisible, setDeckVisible] = useState(true);
 
   const active = layers[order[0]];
   const accent = accentOf(active);
@@ -226,13 +228,65 @@ export function MobileStack(_props: Props) {
     return () => window.clearTimeout(t);
   }, [showHint, reduce, order]);
 
+  // Show the sticky title bar only once the card is scrolled out of view.
+  useEffect(() => {
+    const el = deckRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setDeckVisible(e.intersectionRatio > 0.3), {
+      threshold: [0, 0.3, 0.6, 1],
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div
       className="fixed inset-0 overflow-y-auto"
       style={{ background: "#07070f", WebkitOverflowScrolling: "touch" }}
     >
+      {/* Sticky title bar, appears when the card scrolls out of view */}
+      <div
+        aria-hidden={deckVisible}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 40,
+          display: "flex",
+          alignItems: "center",
+          padding: "calc(env(safe-area-inset-top, 0px) + 14px) 20px 14px",
+          background: "rgba(7,7,15,0.92)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          transform: deckVisible ? "translateY(-100%)" : "translateY(0)",
+          opacity: deckVisible ? 0 : 1,
+          transition: "transform 300ms ease, opacity 300ms ease",
+          pointerEvents: deckVisible ? "none" : "auto",
+        }}
+      >
+        <span
+          aria-hidden
+          style={{ width: 7, height: 7, borderRadius: 999, background: accent, marginRight: 12, flex: "none" }}
+        />
+        <span
+          style={{
+            fontFamily: "'Syne', sans-serif",
+            fontWeight: 700,
+            fontSize: 17,
+            color: "#f0ede8",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {active.title}
+        </span>
+      </div>
+
       {/* Deck */}
-      <div className="relative flex flex-col items-center" style={{ minHeight: "100svh" }}>
+      <div ref={deckRef} className="relative flex flex-col items-center pb-6">
         <AnimatePresence>
           <motion.div
             key={accent}
@@ -270,7 +324,7 @@ export function MobileStack(_props: Props) {
           </div>
         )}
 
-        <div className="relative mt-24" style={{ width: "86vw", height: "56vh" }}>
+        <div className="relative mt-20" style={{ width: "86vw", height: "50vh" }}>
           {visible.map((idx, depth) => (
             <StackCard
               key={layers[idx].id}
@@ -340,21 +394,6 @@ export function MobileStack(_props: Props) {
           />
           {active.eyebrow}
         </div>
-
-        <h1
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            fontWeight: 700,
-            fontSize: "clamp(28px, 8vw, 40px)",
-            lineHeight: 1.08,
-            letterSpacing: "-0.01em",
-            color: "#f0ede8",
-            textWrap: "balance",
-            marginBottom: 24,
-          }}
-        >
-          {active.title}
-        </h1>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           {active.paragraphs.map((p, i) => (
