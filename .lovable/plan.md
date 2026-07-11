@@ -1,33 +1,30 @@
-## Panel (`src/components/portfolio/Panel.tsx`)
+## Goal
+Make the mobile deck cards feel like they own the screen on iPhone 16 Pro (~393×852 CSS px), and let each card's accent color read as the dominant surface instead of a small corner glow.
 
-- Remove the colored top accent border (`borderTop: 3px solid ${layer.accent}`) — replace with the same 1px white/14 border as the rest.
-- Remove the intro variant's photo placeholder (the circular img block). Keep the name + tagline centered on layer 0 only.
-- For all layers *other than* the intro, remove the centered Syne title from the card face. The top-left label is the only visible text.
-- Make the top label more visible: increase color opacity (e.g. `rgba(240,237,232,0.85)`) and weight (600).
-- Hover peek: reduce the lift so just the top label clears the layer in front. Change `translateY(-54%)` to a smaller offset (~`calc(-50% - 22px)`) so only the eyebrow row peeks above the next panel.
+## Changes (mobile only — desktop Cube untouched)
 
-## PanelOverlay — Rolodex Navigation (`src/components/portfolio/PanelOverlay.tsx`)
+### 1. Card size fills the screen
+In `src/components/portfolio/MobileStack.tsx`, resize the deck container so the front card is close to edge-to-edge on iPhone 16 Pro:
+- Width: `min(96vw, 480px)` (was `min(94vw, 460px)`)
+- Height: `min(78vh, 720px)` (was `min(70vh, 640px)`)
+- Reduce the top spacing above the deck (`mt-16` → `mt-10`) and the "swipe to change" hint offset so the taller card fits above the fold with the counter still visible.
+- Reduce the sticky-title trigger threshold so the header appears at the right point for the taller card.
 
-- Remove the colored `borderTop` accent from the overlay card and the colored `borderLeft` on the insight block (use neutral white/20).
-- Accept the full `layers` list + active `index` (or change props to `layerId`/`onChange(id)`). Add `onPrev` / `onNext` callbacks.
-- Wire arrow keys: `ArrowLeft`/`ArrowUp` → prev, `ArrowRight`/`ArrowDown` → next, `Escape` → close.
-- Add on-screen ◀ / ▶ buttons flanking the overlay card (fixed, vertically centered, outside the card). Disabled styling at first/last (or wrap around — wrap is more rolodex-like; **decision: wrap around**).
-- Animate card swap: use `motion.div` keyed by `layer.id` inside `AnimatePresence` with a quick slide+fade (incoming from +40px y, outgoing to -40px y) so it feels like a rolodex flip. Keep the existing origin-rect zoom only for the *first* open (when navigating, skip the rect math).
+### 2. Accent color fills more of the card, brighter
+In `CardFace` (same file), replace the small top-right radial with a full-bleed accent wash:
+- Base gradient becomes a diagonal blend from a bright accent tint at the top into the deep near-black at the bottom, roughly:
+  `linear-gradient(160deg, {accent} 0%, {accent}CC 22%, #1a1a24 70%, #0b0b12 100%)`
+- Add a second large soft radial (~140% of card size) anchored top-right at higher opacity (~`{accent}` at 55–65% alpha, fading to transparent by 75%) so color bleeds across most of the card.
+- Add a subtle bottom vignette so the title stays readable on the darker lower third.
+- Keep the accent dot + label and the title untouched in size/position; verify contrast on the brightest accents (amber, acid, ice, plasma, coral) — title stays `#f0ede8`; if any accent washes out the label, add a thin dark scrim behind the label row only.
 
-## Portfolio (`src/components/portfolio/Portfolio.tsx`)
-
-- Pass `layers` and `activeId` to `PanelOverlay`; provide `onPrev`/`onNext` that step `activeId` through the `layers` array with wrap-around.
-- Clear `originRect` after first mount so subsequent prev/next swaps animate cleanly without the zoom origin.
-
-## CONTEXT game (`src/routes/context.tsx`)
-
-Simplify:
-- Replace all "beat" terminology with "line" (UI copy + variable/type names: `BeatType` → `LineType` is optional; user-facing copy is what matters — rename labels: "Add beat" → "Add line", "FORGETTING — EACH BEAT COSTS A MEMORY" → "FORGETTING — EACH LINE COSTS A MEMORY", "Click a card to forget it" stays).
-- Remove the four line types (Introduction / Turn / Revelation / Loss). Every line is one kind, costs 1 token. Drop `BEAT_COLOURS`, `BEAT_COSTS`, `BEAT_ORDER`, the `selectedBeat` selector UI, the 1–4 keyboard shortcut effect, and the `type` field on cards.
-- `playBeat` (rename to `playLine`) always deducts 1 token. Cards render with neutral border (no per-type color).
-- Setup screen: remove copy referencing different beat types if any. Keep token selector, seed input.
-- Reflection / EndScreen: remove any per-type breakdowns; keep total lines played, memories forgotten.
+### 3. Small polish
+- Bump the drop shadow slightly since the card is larger (`0 30px 80px rgba(0,0,0,0.75)`).
+- Keep entrance stack animation, swipe, and article behavior unchanged.
 
 ## Out of scope
+- Desktop `Cube` panels
+- Copy, fonts, article layout, navigation, routing
 
-No data, font, layout, or routing changes beyond above. No edits to `Cube.tsx`, `data.ts`, or `MobileStack.tsx`.
+## Summary
+Bigger card (up to 96vw × 78vh, capped) and a full-card accent wash so each project's color dominates the surface instead of sitting in the corner.
