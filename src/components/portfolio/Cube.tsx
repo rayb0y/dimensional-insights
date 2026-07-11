@@ -7,7 +7,7 @@ import { Panel } from "./Panel";
 const MIN_ROT = -55;
 const MAX_ROT = 55;
 // Rotation the site opens at — already fanned out, not the flat 0deg stack.
-const START_ROT = 45;
+const START_ROT = 35;
 const clampRot = (v: number) => Math.max(MIN_ROT, Math.min(MAX_ROT, v));
 
 type Props = {
