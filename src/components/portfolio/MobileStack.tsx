@@ -100,6 +100,12 @@ function StackCard({
   const opacity = useTransform(x, [-320, -160, 0, 160, 320], [0, 1, 1, 1, 0]);
   const moved = useRef(false);
 
+  // Whenever this card becomes the front card, snap it back to centre so the
+  // deck never drifts sideways across swipes.
+  useEffect(() => {
+    if (isFront) x.set(0);
+  }, [isFront]);
+
   useEffect(() => {
     if (!nudge || reduce) return;
     const controls = animate(x, [0, -16, 0], { duration: 0.7, times: [0, 0.35, 1], ease: "easeInOut" });
@@ -111,9 +117,9 @@ function StackCard({
       <motion.div
         className="absolute inset-0"
         animate={{
-          scale: 1 - depth * 0.035,
-          x: depth * 18,
-          y: depth * 8,
+          scale: 1 - depth * 0.03,
+          x: -depth * 15,
+          y: depth * 7,
           opacity: 1,
         }}
         transition={{ type: "spring", stiffness: 300, damping: 32 }}
@@ -238,7 +244,7 @@ export function MobileStack(_props: Props) {
   return (
     <div
       className="fixed inset-0 overflow-y-auto"
-      style={{ background: "#07070f", WebkitOverflowScrolling: "touch" }}
+      style={{ background: "#07070f", WebkitOverflowScrolling: "touch", overflowX: "hidden" }}
     >
       {/* Sticky title bar, appears when the card scrolls out of view */}
       <div
@@ -320,7 +326,7 @@ export function MobileStack(_props: Props) {
           </div>
         )}
 
-        <div className="relative mt-20" style={{ width: "90vw", height: "56vh" }}>
+        <div className="relative mt-20" style={{ width: "84vw", height: "56vh", marginLeft: 18 }}>
           {visible.map((idx, depth) => (
             <StackCard
               key={layers[idx].id}
