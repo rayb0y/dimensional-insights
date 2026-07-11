@@ -18,17 +18,15 @@ const accentOf = (l: Layer) => (l.accent.startsWith("#") ? l.accent : "#ffcc33")
 const glowStops = (accent: string) => `${accent}40 0%, ${accent}14 34%, ${accent}00 62%`;
 
 // Deck cover: label + title only. The full copy lives in the article below.
-function CardFace({ layer, dim }: { layer: Layer; dim?: boolean }) {
+function CardFace({ layer }: { layer: Layer }) {
   const accent = accentOf(layer);
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden"
       style={{
-        background: dim ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.05)",
-        backdropFilter: dim ? undefined : "blur(12px)",
-        WebkitBackdropFilter: dim ? undefined : "blur(12px)",
-        boxShadow: "0 30px 90px rgba(0,0,0,0.65)",
-        opacity: dim ? 0.92 : 1,
+        background: "linear-gradient(158deg, #20202c 0%, #101019 60%, #0b0b12 100%)",
+        boxShadow:
+          "0 26px 70px rgba(0,0,0,0.7), inset 1px 0 0 rgba(255,255,255,0.06), inset -1px 0 0 rgba(0,0,0,0.5)",
       }}
     >
       <div
@@ -99,7 +97,6 @@ function StackCard({
   reduce?: boolean | null;
 }) {
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-240, 240], [-7, 7]);
   const opacity = useTransform(x, [-320, -160, 0, 160, 320], [0, 1, 1, 1, 0]);
   const moved = useRef(false);
 
@@ -114,14 +111,15 @@ function StackCard({
       <motion.div
         className="absolute inset-0"
         animate={{
-          scale: 1 - depth * 0.05,
-          y: depth * 20,
-          opacity: 1 - depth * 0.18,
+          scale: 1 - depth * 0.035,
+          x: depth * 18,
+          y: depth * 8,
+          opacity: 1,
         }}
         transition={{ type: "spring", stiffness: 300, damping: 32 }}
         style={{ zIndex: 10 - depth }}
       >
-        <CardFace layer={layer} dim />
+        <CardFace layer={layer} />
       </motion.div>
     );
   }
@@ -132,7 +130,7 @@ function StackCard({
       tabIndex={0}
       aria-label={`Read about ${layer.title}`}
       className="absolute inset-0"
-      style={{ x, rotate, opacity, zIndex: 20, touchAction: "pan-y", cursor: "grab" }}
+      style={{ x, opacity, zIndex: 20, touchAction: "pan-y", cursor: "grab" }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.75}
