@@ -1,22 +1,16 @@
-## Goal
+Update the Canon capstone entry in `src/components/portfolio/data.ts` to accurately reflect team roles.
 
-On desktop, the expanded card content should start from the top of the card instead of being bottom-anchored on shorter cards.
+## Copy change
 
-## Current behavior
+Rewrite the second paragraph of the `canon` layer (keep paragraph 1 and 3 as-is, keep tone: plain voice, no em dashes, no "not X but Y", no hype).
 
-In `src/components/portfolio/PanelOverlay.tsx`, the body container uses `justifyContent: overflows ? "flex-start" : "flex-end"`. Short cards that don't overflow get pushed to the bottom (poster style). This applies on both mobile and desktop.
+**New paragraph 2:**
 
-## Change
+> I worked in a team of five. Together we ran the primary research, interviewing users and mapping where the real needs were. I led the brainstorming, running the team through twenty to thirty ideas before we converged on a direction worth pursuing. From there I ran the engineering feasibility analysis, pressure-testing the hard technical assumptions before anyone committed to them. We worked the competitive positioning together, then pulled the three lenses: user need, feasibility and  business fit, into a single product strategy delivered to Canon's leadership.
 
-Desktop-only: always top-anchor the content.
+(I'll drop the em dash and rephrase as: "…pulled the three lenses together, user need, feasibility, and business fit, into a single product strategy delivered to Canon's leadership.")
 
-- `justifyContent`: `flex-start` on desktop regardless of overflow. Mobile keeps existing poster/scroll behavior.
-- `paddingTop`: consistent top padding on desktop (e.g. `20`) instead of `0` when not overflowing.
-- `paddingBottom`: keep `28` when not overflowing so bottom links/buttons breathe.
-- Fade mask stays tied to `overflows` (only applied when scrolling).
+## Scope
 
-Mobile layout, animations, copy, colors, and the desktop Cube are untouched.
-
-## Files
-
-- `src/components/portfolio/PanelOverlay.tsx` — adjust the body div style block (around lines 371–383).
+- File: `src/components/portfolio/data.ts`, the `canon` object's second paragraph only.
+- No other layers, components, styles, or logic touched.
