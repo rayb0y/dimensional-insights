@@ -375,9 +375,9 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                     minHeight: 0,
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: overflows ? "flex-start" : "flex-end",
-                    paddingTop: overflows ? 20 : 0,
-                    paddingBottom: overflows ? 8 : 28,
+                    justifyContent: isMobile ? (overflows ? "flex-start" : "flex-end") : "flex-start",
+                    paddingTop: isMobile ? (overflows ? 20 : 0) : 20,
+                    paddingBottom: isMobile ? (overflows ? 8 : 28) : overflows ? 8 : 28,
                     ...(overflows ? { maskImage: FADE, WebkitMaskImage: FADE } : {}),
                   }}
                 >
