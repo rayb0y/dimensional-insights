@@ -24,33 +24,13 @@ function CardFace({ layer }: { layer: Layer }) {
     <div
       className="relative flex h-full w-full flex-col overflow-hidden"
       style={{
-        background: `linear-gradient(160deg, ${accent} 0%, ${accent}CC 22%, #1a1a24 72%, #0b0b12 100%)`,
-        boxShadow:
-          "0 30px 80px rgba(0,0,0,0.75), inset 1px 0 0 rgba(255,255,255,0.08), inset -1px 0 0 rgba(0,0,0,0.5)",
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.14)",
+        backdropFilter: "blur(4px)",
+        boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
       }}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute"
-        style={{
-          top: "-40%",
-          right: "-40%",
-          width: "140%",
-          height: "140%",
-          background: `radial-gradient(circle at center, ${accent} 0%, ${accent}99 30%, ${accent}33 55%, transparent 75%)`,
-          mixBlendMode: "screen",
-          opacity: 0.9,
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0"
-        style={{
-          height: "55%",
-          background:
-            "linear-gradient(to top, rgba(11,11,18,0.85) 0%, rgba(11,11,18,0.4) 55%, transparent 100%)",
-        }}
-      />
+
 
       <div className="relative flex items-start px-7 pt-7" style={{ zIndex: 1 }}>
         <span
