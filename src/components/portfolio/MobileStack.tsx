@@ -51,7 +51,7 @@ function CardFace({ layer }: { layer: Layer }) {
               width: 8,
               height: 8,
               borderRadius: 999,
-              background: "#f0ede8",
+              background: accent,
               marginRight: 12,
               flex: "none",
               boxShadow: "0 0 0 2px rgba(0,0,0,0.2)",
