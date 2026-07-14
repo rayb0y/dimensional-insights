@@ -1,16 +1,22 @@
-Update the Canon capstone entry in `src/components/portfolio/data.ts` to accurately reflect team roles.
+## Match mobile card colours to desktop
 
-## Copy change
+On desktop, each cube panel is a translucent glass card (`rgba(255,255,255,0.02–0.04)` with a subtle white border) and the accent colour only appears as an ambient radial glow behind the cube. On mobile, cards currently render as a full accent-coloured gradient fill. This plan brings mobile in line with desktop.
 
-Rewrite the second paragraph of the `canon` layer (keep paragraph 1 and 3 as-is, keep tone: plain voice, no em dashes, no "not X but Y", no hype).
+### Change (single file)
 
-**New paragraph 2:**
+**`src/components/portfolio/MobileStack.tsx` — `CardFace` component**
 
-> I worked in a team of five. Together we ran the primary research, interviewing users and mapping where the real needs were. I led the brainstorming, running the team through twenty to thirty ideas before we converged on a direction worth pursuing. From there I ran the engineering feasibility analysis, pressure-testing the hard technical assumptions before anyone committed to them. We worked the competitive positioning together, then pulled the three lenses: user need, feasibility and  business fit, into a single product strategy delivered to Canon's leadership.
+- Replace the accent gradient `background` on the card container with the desktop glass treatment:
+  - `background: "rgba(255,255,255,0.03)"`
+  - `border: "1px solid rgba(255,255,255,0.14)"`
+  - `backdropFilter: "blur(4px)"` (+ `-webkit-`)
+  - Keep an outer drop shadow for depth.
+- Remove the two internal accent-fill decorative layers (the large radial `screen`-blend blob and the dark bottom gradient) — desktop panels have neither.
+- Keep the accent presence via the existing behind-the-deck radial glow already rendered by `MobileStack` (the `glowStops(accent)` layer). No change needed there; it mirrors the desktop cube glow.
+- Keep label + title typography and layout unchanged (label top-left, title bottom-left), but recolor the small label dot to use the layer accent (matches the sticky title bar dot already in the file) instead of ivory.
 
-(I'll drop the em dash and rephrase as: "…pulled the three lenses together, user need, feasibility, and business fit, into a single product strategy delivered to Canon's leadership.")
+### Out of scope
 
-## Scope
-
-- File: `src/components/portfolio/data.ts`, the `canon` object's second paragraph only.
-- No other layers, components, styles, or logic touched.
+- No changes to desktop `Cube.tsx` / `Panel.tsx`.
+- No changes to card sizing, stacking, swipe behaviour, article/detail section, or `data.ts`.
+- No changes to the background glow colour logic.
