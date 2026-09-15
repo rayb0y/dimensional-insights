@@ -447,6 +447,14 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                     </div>
                   )}
 
+                  {layer.liveUrl && (
+                    <div style={{ marginTop: 22 }}>
+                      <a href={layer.liveUrl} target="_blank" rel="noreferrer" style={linkBtn}>
+                        {layer.liveLabel ?? "See it live"} →
+                      </a>
+                    </div>
+                  )}
+
                   {layer.watchUrl && (
                     <div style={{ marginTop: 22 }}>
                       <a href={layer.watchUrl} target="_blank" rel="noreferrer" style={linkBtn}>

@@ -462,6 +462,12 @@ export function MobileStack(_props: Props) {
           </button>
         )}
 
+        {active.liveUrl && (
+          <a href={active.liveUrl} target="_blank" rel="noreferrer" style={linkStyle}>
+            {active.liveLabel ?? "See it live"} →
+          </a>
+        )}
+
         {active.watchUrl && (
           <a href={active.watchUrl} target="_blank" rel="noreferrer" style={linkStyle}>
             Watch Film →

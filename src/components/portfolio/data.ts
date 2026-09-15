@@ -8,6 +8,8 @@ export type Layer = {
   insight?: string;
   awardLine?: string;
   watchUrl?: string;
+  liveUrl?: string;
+  liveLabel?: string;
   tags: string[];
   variant?: "intro" | "contact" | "film" | "lalama" | "default";
   tagline?: string;
@@ -46,14 +48,14 @@ export const layers: Layer[] = [
   {
     id: "ai-facilitation",
     accent: ACCENT.ice,
-    label: "AI Facilitation  ·  CMU Research",
+    label: "Agora  ·  AI Facilitation",
     eyebrow:
-      "CMU  ·  Integrated Innovation Institute  ·  2026  ·  Research under Dr. Arthur Sugden",
-    title: "Can AI ask the question that gets a team unstuck?",
+      "CMU  ·  Integrated Innovation Institute  ·  2026  ·  Research under Dr. Arthur Sugden  ·  In pilot",
+    title: "A team wiki that asks what the team is avoiding",
     paragraphs: [
-      "Innovation teams stall in ways that are hard to see from inside. A framing settles too early, a decision's reasoning goes unexamined, or teammates quietly disagree about what was decided. A good facilitator asks the question that puts the thinking back in the team's hands, and this research asks whether AI can do that job.",
-      "I ran the primary research, eight interviews with innovation students and faculty, and read the results against the science on team dynamics, motivation, and curiosity. One finding set the direction: current models are unreliable at giving answers and competent at reading where reasoning is incomplete. So the design aims at the second skill. The tool gives no verdicts. It holds the team's own record of its decisions and asks grounded questions against it.",
-      "The research is becoming a product I am building now: a shared surface that shows where teammates' accounts of a decision diverge, a questioner that stress-tests reasoning before a mentor or client does, and a weekly reflection that restarts curiosity. One rule runs through all of it: the tool is always available, and the team decides when it speaks.",
+      "Innovation teams stall in ways that are hard to see from inside. A framing settles too early, a decision's reasoning goes unexamined, or teammates quietly disagree about what was decided. A good facilitator asks the question that puts the thinking back in the team's hands, and this research asked whether AI can do that job.",
+      "I ran the primary research, eight interviews with industry experts, faculty, students and independent innovators, and read the results against the science on team dynamics, motivation, and curiosity. One finding set the direction: current models are unreliable at giving answers and competent at reading where reasoning is incomplete. So the design aims at the second skill. The tool gives no verdicts. It holds the team's own record of its decisions and asks grounded questions against it.",
+      "Agora is that design, built and running. It is a shared wiki the team writes into, with every contribution attributed, so a team can see who said what and when. The model answers from those records rather than from memory, and can take scoped actions on the team's behalf. One rule runs through all of it: the tool is always available, and the team decides when it speaks. A student team is piloting it in a CMU course now.",
     ],
     tags: [
       "Product Strategy",
@@ -62,6 +64,8 @@ export const layers: Layer[] = [
       "Primary Research",
       "CMU",
     ],
+    liveUrl: "https://agora-mvp.pages.dev/",
+    liveLabel: "See Agora",
   },
   {
     id: "canon",
@@ -132,9 +136,11 @@ export const layers: Layer[] = [
     eyebrow: "CMU  ·  UX Research Methods  ·  Aug–Oct 2025  ·  Lead Researcher",
     title: "The part of travel no product designs for",
     paragraphs: [
-      "Travel products cover the trip and stop at the front door. Coming home is quietly disorienting: routines feel foreign, responsibilities feel heavier, and the contrast between away and back takes real adjustment. As lead researcher I ran a multi-method study, combining diary studies, semi-structured interviews, and contextual inquiry, and mapped the emotional arc of return rather than its logistics. The study surfaced three re-entry archetypes, each with distinct friction points and support needs, and pointed at the stakes: how re-entry goes shapes whether someone travels again.",
+      "Travel products cover the trip and stop at the front door. Coming home is quietly disorienting: routines feel foreign, responsibilities feel heavier, and the contrast between away and back takes real adjustment. A domain survey confirmed the gap is industry-wide. The major travel apps compete on planning and booking and offer nothing for the return.",
+      "I ran a multi-method study on that gap: literature review, roleplay and observation on my own road trip, a survey of 29 travelers aged 25 to 55, six in-depth interviews, and a co-design activity built on four custom sheets that got people drawing their experience instead of describing it. Affinity mapping turned the raw material into three insights. Travelers want the trip to end. They brace for impact with private rituals. Emotional re-entry runs one to two days past the front door, interrupting work with memories that will not wait their turn.",
+      "I mapped those into a journey covering the final hour of the drive through the second day home, then defined two product opportunity areas: a formalized way to close the trip socially before everyone separates, and a guided re-entry that gives the first 48 hours room to breathe. The reframe is the useful part. This is not a trip-planning problem. It is a deceleration problem.",
     ],
-    tags: ["UX Research", "Multi-method", "Qualitative", "Diary Study"],
+    tags: ["UX Research", "Multi-method", "Qualitative", "Co-design", "Journey Mapping"],
   },
   {
     id: "ey-change",
