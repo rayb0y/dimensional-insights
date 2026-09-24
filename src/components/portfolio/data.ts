@@ -10,6 +10,7 @@ export type Layer = {
   watchUrl?: string;
   liveUrl?: string;
   liveLabel?: string;
+  caseStudy?: string;
   tags: string[];
   variant?: "intro" | "contact" | "film" | "lalama" | "default";
   tagline?: string;
@@ -64,6 +65,7 @@ export const layers: Layer[] = [
       "Primary Research",
       "CMU",
     ],
+    caseStudy: "agora",
     liveUrl: "https://agora-mvp.pages.dev/",
     liveLabel: "See Agora",
   },
@@ -85,6 +87,7 @@ export const layers: Layer[] = [
       "NDA",
       "CMU",
     ],
+    caseStudy: "canon",
   },
   {
     id: "lalama",
