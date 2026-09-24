@@ -3,11 +3,6 @@ import { useEffect, type CSSProperties } from "react";
 import { Grain } from "./Grain";
 import { caseStudies, type Block, type CaseStudy, type ImageRef } from "./caseStudies";
 
-// Placeholders for figures you have not added yet show only in the Lovable
-// preview (dev). The published site hides them, so a half-finished page never
-// shows empty boxes.
-const SHOW_TODO = import.meta.env.DEV;
-
 const INK = "#f0ede8";
 const INK_2 = "rgba(240,237,232,0.88)";
 const INK_3 = "rgba(240,237,232,0.55)";
@@ -50,24 +45,6 @@ const para: CSSProperties = {
   color: INK_2,
 };
 
-function Todo({ note }: { note: string }) {
-  if (!SHOW_TODO) return null;
-  return (
-    <div
-      style={{
-        border: "1px dashed rgba(255,255,255,0.3)",
-        padding: "28px 22px",
-        fontFamily: BODY,
-        fontSize: 13,
-        lineHeight: 1.6,
-        color: INK_3,
-      }}
-    >
-      <strong style={{ color: INK, fontWeight: 500 }}>To add: </strong>
-      {note}
-    </div>
-  );
-}
 
 function Img({ img }: { img: ImageRef }) {
   return (
@@ -232,11 +209,11 @@ function BlockView({ block, accent }: { block: Block; accent: string }) {
       );
 
     case "figure":
-      if (!block.src) return block.todo ? <Todo note={block.todo} /> : null;
+      if (!block.src) return null;
       return <Img img={{ src: block.src, alt: block.alt, caption: block.caption }} />;
 
     case "gallery":
-      if (block.images.length === 0) return block.todo ? <Todo note={block.todo} /> : null;
+      if (block.images.length === 0) return null;
       return (
         <div className="cs-gallery">
           {block.images.map((img) => (
@@ -246,7 +223,7 @@ function BlockView({ block, accent }: { block: Block; accent: string }) {
       );
 
     case "doc":
-      if (!block.href) return block.todo ? <Todo note={block.todo} /> : null;
+      if (!block.href) return null;
       return (
         <div style={{ border: `1px solid ${LINE}` }}>
           <a
@@ -294,7 +271,7 @@ function BlockView({ block, accent }: { block: Block; accent: string }) {
       );
 
     case "embed":
-      if (!block.src) return block.todo ? <Todo note={block.todo} /> : null;
+      if (!block.src) return null;
       return (
         <figure style={{ margin: 0 }}>
           <div style={{ position: "relative", aspectRatio: block.ratio ?? "16 / 9", border: `1px solid ${LINE}` }}>
@@ -312,7 +289,7 @@ function BlockView({ block, accent }: { block: Block; accent: string }) {
       );
 
     case "video":
-      if (!block.src) return block.todo ? <Todo note={block.todo} /> : null;
+      if (!block.src) return null;
       return (
         <figure style={{ margin: 0 }}>
           <video
