@@ -7,7 +7,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { layers, type Layer } from "./data";
 
 type Props = {
@@ -462,6 +462,11 @@ export function MobileStack(_props: Props) {
           </button>
         )}
 
+        {active.caseStudy && (
+          <Link to="/work/$slug" params={{ slug: active.caseStudy }} style={linkStyle}>
+            Read more →
+          </Link>
+        )}
         {active.liveUrl && (
           <a href={active.liveUrl} target="_blank" rel="noreferrer" style={linkStyle}>
             {active.liveLabel ?? "See it live"} →

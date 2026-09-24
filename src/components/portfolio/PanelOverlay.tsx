@@ -6,7 +6,7 @@ import {
   useState,
   type MouseEvent as ReactMouseEvent,
 } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { Layer } from "./data";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -447,6 +447,13 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                     </div>
                   )}
 
+                  {layer.caseStudy && (
+                    <div style={{ marginTop: 22 }}>
+                      <Link to="/work/$slug" params={{ slug: layer.caseStudy }} style={linkBtn}>
+                        Read more →
+                      </Link>
+                    </div>
+                  )}
                   {layer.liveUrl && (
                     <div style={{ marginTop: 22 }}>
                       <a href={layer.liveUrl} target="_blank" rel="noreferrer" style={linkBtn}>
