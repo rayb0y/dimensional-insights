@@ -2,8 +2,7 @@
 // To add a picture, document, video or embed: add a block to a section's
 // `blocks` array (or fill in the `src` / `href` of an existing one).
 // Files go in /public/case-studies/<slug>/ and are referenced as
-// "/case-studies/<slug>/<file>". Blocks with no src/href show a dashed
-// "To add" box in the Lovable preview only; the published site hides them.
+// "/case-studies/<slug>/<file>". Blocks with no src/href render nothing.
 
 export type ImageRef = { src: string; alt: string; caption?: string };
 
