@@ -305,5 +305,297 @@ export const caseStudies: Record<string, CaseStudy> = {
       }
     ],
     "next": "canon"
-  }
+  },
+canon: {
+  "slug": "canon",
+  "accent": "#38b6ff",
+  "cardId": "canon",
+  "eyebrow": "Case study  ·  CMU IPD Capstone  ·  Industry client: Canon  ·  Jan–Apr 2026",
+  "title": "Deciding what to build before building it",
+  "summary": "Canon asked a five-person CMU team what its EOS Webcam Utility should become. Over four months we ran a structured discovery, narrowed the product to one customer, emerging content creators, and recommended turning a webcam utility into a creator ecosystem. Canon leadership decided to go forward with the direction and is building an MVP.",
+  "meta": [
+    {
+      "label": "Role",
+      "value": "Product management, user research, engineering"
+    },
+    {
+      "label": "Team",
+      "value": "Five, across design, business and engineering"
+    },
+    {
+      "label": "Client",
+      "value": "Canon"
+    },
+    {
+      "label": "Timeline",
+      "value": "January to April 2026"
+    },
+    {
+      "label": "Research",
+      "value": "60+ interviews, first-time-use study, in-home observation, co-design"
+    },
+    {
+      "label": "Outcome",
+      "value": "Direction adopted, MVP in development"
+    }
+  ],
+  "links": [],
+  "hero": {
+    "type": "figure",
+    "todo": "Hero: a team photo or a still from the final presentation video (Drive: CANON - Capstone > Pictures, or Team Videos & Photos).",
+    "alt": ""
+  },
+  "sections": [
+    {
+      "id": "brief",
+      "heading": "The brief",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Canon's EOS Webcam Utility turns a Canon camera into a webcam for a computer. Canon came to the capstone with an open question: what should the product become, and for whom? That question sits upstream of engineering and go-to-market. A wrong answer there is expensive for every team that acts on it."
+        },
+        {
+          "type": "p",
+          "text": "The client set one hard constraint: the answer had to live in software, with no changes to Canon's hardware. We held every idea to three tests at once."
+        },
+        {
+          "type": "cards",
+          "items": [
+            {
+              "title": "Desirable",
+              "text": "What users actually need."
+            },
+            {
+              "title": "Feasible",
+              "text": "What can be built, tested on real hardware before anyone commits to it."
+            },
+            {
+              "title": "Viable",
+              "text": "What the business can sustain, including whether customers would pay."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "process",
+      "heading": "How we worked",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "The capstone follows iNPD, the four-phase product development process Jonathan Cagan and Craig Vogel developed at Carnegie Mellon. We met Canon every one to two weeks, and weekly from March. Those meetings were where the direction was argued, tested and pushed back on."
+        },
+        {
+          "type": "steps",
+          "items": [
+            {
+              "label": "Phase 1",
+              "title": "Identify",
+              "text": "A PESTLE scan and interviews with three groups who put a camera on a computer: remote workers, educators and content creators. It ended with two opportunities worth pursuing."
+            },
+            {
+              "label": "Phase 2",
+              "title": "Understand",
+              "text": "A first-time-use study of the existing product, a Value Opportunity Analysis, creator archetypes, a Five Whys root-cause analysis, and early product criteria."
+            },
+            {
+              "label": "Phase 3",
+              "title": "Conceptualize",
+              "text": "An in-home observation of a creator running a live stream, co-design sessions, a Build-A-Thon prototyping day, concept maps and storyboards, and reviews with Canon's own developers."
+            },
+            {
+              "label": "Phase 4",
+              "title": "Realize",
+              "text": "The final concept specified in detail, market sizing, engineering feasibility and a technology roadmap, presented to Canon leadership."
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "text": "The team ran more than 60 user interviews across the project. I ran six of them, with streamers, a remote professional and an educator."
+        },
+        {
+          "type": "p",
+          "text": "Two pieces of faculty feedback changed how we worked. Our first PESTLE centred on Canon and its revenue, and we were pushed toward the people problem instead: solve that, and the business problem follows. Later, our early product criteria read like features, such as presets and software enhancements. We rewrote them as the benefits behind those features, which kept the range of possible concepts open for longer."
+        },
+        {
+          "type": "figure",
+          "todo": "A photo from the research: the first-time-use session or the in-home stream observation (Drive: CANON - Capstone > Pictures).",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": "findings",
+      "heading": "What the research found",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "To feel the problem ourselves, we set up the existing product as first-time users, with a multi-camera stream. It was hard going. There were too many manual steps and no clear next one. We couldn't find the login. The USB cable blocked the camera's flip screen. Autofocus kept hunting, the audio lagged, and the stream froze without explanation. One line from our notes sums it up."
+        },
+        {
+          "type": "quote",
+          "text": "AUTOFOCUS PLEASE",
+          "cite": "First-time-use session notes"
+        },
+        {
+          "type": "p",
+          "text": "We then watched an emerging creator set up and run a live stream in their own home, from planning to the end of the stream. They showed the same anxiety about audio sync and connection stability before going live. Together with the interviews, this gave us four insights."
+        },
+        {
+          "type": "list",
+          "items": [
+            "Setup friction drains creative headspace. Energy spent on cables and settings is energy taken from the performance.",
+            "Reliability governs high-stakes moments. For live creators, one dropped feed can ruin the whole session.",
+            "Consistency dictates quality. A creator building a brand needs the same look every time without rebuilding it.",
+            "Guesswork starts before you hit record. Knowing which equipment to use and how to connect it is itself a barrier."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "When setup gets too painful, people abandon good cameras and go back to their phones."
+        }
+      ]
+    },
+    {
+      "id": "narrowing",
+      "heading": "Narrowing to one customer",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Remote workers, educators and creators make different things and share the same frustrations. They are very different customers, though. Casual video callers don't care which camera they use and stop spending once the picture works, so serving them would not grow the product. Established streamers already have the skills, or a crew, to get past setup problems."
+        },
+        {
+          "type": "p",
+          "text": "Emerging content creators were different. They work solo, often as a side hustle, with little time and budget. They treat their stream as an investment in their brand and income, so they pay for things that raise their production value. And setup is exactly what stops them. We made the case over successive client meetings, and by the end of February the target was set: emerging content creators."
+        },
+        {
+          "type": "p",
+          "text": "With one customer in view, the rest of the work had something to stand on. We named what these creators value most (reliability, confidence, consistency and ease), wrote the product criteria around those values, and turned them into four principles for the solution."
+        },
+        {
+          "type": "cards",
+          "items": [
+            {
+              "title": "Zero guesswork",
+              "text": "The setup confirms it is working before the session starts."
+            },
+            {
+              "title": "Performance first",
+              "text": "The software recedes during recording, so the creator stays in the performance."
+            },
+            {
+              "title": "Instant execution",
+              "text": "The shortest path from plugging in to going live."
+            },
+            {
+              "title": "Grows with you",
+              "text": "Works for a first setup and scales as the production grows."
+            }
+          ]
+        },
+        {
+          "type": "callout",
+          "text": "The team's name for the goal was Speed to Joy: how quickly a creator gets from wanting to make something to recording it with confidence."
+        }
+      ]
+    },
+    {
+      "id": "recommendation",
+      "heading": "The recommendation",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "We recommended turning the utility into a creator ecosystem, Canon Creator Studio. It has four parts: a web hub for setup guidance, a desktop app that keeps the stream stable and improves the picture, a mobile app that works as a remote control, and hardware starter kits that remove physical failure points like cable placement and a battery dying mid-stream."
+        },
+        {
+          "type": "p",
+          "text": "Canon's team kept coming back to one question. If a creator can plug the camera into a capture card, why pay a monthly subscription? Our answer was to compete on what the product lets a creator do. Competing on specs pushes buyers to compare numbers. An ecosystem that gets a creator from idea to a working stream quickly is worth paying for, and much harder for a cheaper tool to copy."
+        },
+        {
+          "type": "p",
+          "text": "Canon's engineering leadership also asked us to stay on the original brief and avoid blue-sky ideas. The ecosystem builds on the existing utility, so the recommendation widened what the product does while staying anchored to it."
+        },
+        {
+          "type": "gallery",
+          "images": [],
+          "todo": "The ecosystem's touchpoints: web hub, desktop app and mobile app screens (from Figma), plus a starter kit rendering (Drive: Phase 4 > Starter Kit Renderings)."
+        }
+      ]
+    },
+    {
+      "id": "feasibility",
+      "heading": "Checking it could be built",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "I worked across three roles on the team: product management, user research and engineering. On the engineering side, I owned the feasibility test. A recommendation that rests on untested technical assumptions is a guess, so before the team committed, I listed the riskiest assumptions behind the concept and built 14 small prototypes to test them on real hardware: a Canon EOS R8, a capture card and OBS Studio."
+        },
+        {
+          "type": "p",
+          "text": "Each prototype tested one assumption and had its pass or fail criteria written before any code, so no result could be argued into a pass afterwards. They covered controlling the camera over USB while capturing HDMI video at the same time, controlling it over Wi-Fi, enhancing video in real time within a single frame's time budget, and a recording engine that recovers from a crash in about a second without losing footage."
+        },
+        {
+          "type": "stats",
+          "items": [
+            {
+              "value": "14",
+              "label": "prototypes, each testing one technical risk"
+            },
+            {
+              "value": "81/81",
+              "label": "tests passed on real Canon hardware"
+            },
+            {
+              "value": "3",
+              "label": "months to the first release in the roadmap"
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "text": "On the product side, I wrote the engineering plan and the roadmap. Building on the existing utility, which already had signed drivers and camera control, removed about three months of ramp-up. Instead of one launch at the end of the build, the roadmap ships in stages: reliability and setup first, then video enhancement, presets, starter kits and the mobile companion, then standalone mobile streaming and cloud backup. Creators would be using the product for most of the build and shaping it with their feedback."
+        },
+        {
+          "type": "figure",
+          "todo": "The system architecture diagram (Career folder: Canon_Architecture_Diagram.svg). Check it reads on a dark background.",
+          "alt": ""
+        },
+        {
+          "type": "doc",
+          "kind": "PDF",
+          "title": "Engineering architecture guide",
+          "description": "How the ecosystem would be built on the existing utility.",
+          "todo": "Upload Canon_EOS_WebUtility_Architecture_Guide.pdf from the Career folder to public/case-studies/canon/, then set href."
+        }
+      ]
+    },
+    {
+      "id": "outcome",
+      "heading": "The outcome",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "We presented the concept, the research behind it, the feasibility evidence and the roadmap to Canon leadership. Canon decided to go forward with the direction and is building an MVP."
+        },
+        {
+          "type": "embed",
+          "title": "Final presentation video",
+          "todo": "The final video (Drive: Phase 4 > capstone FINAL.mp4). It is 224 MB, so upload it to YouTube as unlisted and use the youtube-nocookie embed link."
+        }
+      ]
+    },
+    {
+      "id": "reflection",
+      "heading": "What I took from it",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Research, research, research before building. Narrowing to one customer segment is what let us build out the tenets of the solution. The values, the product criteria, the four principles and even the order of the roadmap all came from knowing exactly who we were building for."
+        }
+      ]
+    }
+  ],
+  "next": "agora"
+},
 };

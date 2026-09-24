@@ -78,13 +78,13 @@ export const layers: Layer[] = [
     paragraphs: [
       "Canon was the industry client for my CMU capstone, and the brief was the question that sits upstream of engineering and go-to-market: what is worth building. Over four months I ran a structured discovery to answer it, held to three tests at once: what users actually need, what is technically feasible, and what the business can sustain.",
       "I worked in a team of five. Together we ran the primary research, interviewing users and mapping where the real needs were. I led the brainstorming, running the team through twenty to thirty ideas before we converged on a direction worth pursuing. From there I ran the engineering feasibility analysis, pressure-testing the hard technical assumptions before anyone committed to them. We worked the competitive positioning together, then pulled the three lenses, user need, feasibility, and business fit, into a single product strategy delivered to Canon's leadership.",
-      "The deliverable was not a prototype. It was a reasoned answer to what Canon should build next and why. The specifics stay with the client under NDA, but the shape of the work, deciding what to build before building it, is the part that matters most to me.",
+      "The recommendation was Canon Creator Studio, a creator ecosystem built on the existing utility, with a staged roadmap backed by fourteen feasibility prototypes. Canon leadership decided to go forward with it and is building an MVP.",
     ],
     tags: [
       "Product Strategy",
       "Customer Discovery",
       "Engineering Feasibility",
-      "NDA",
+      "Roadmapping",
       "CMU",
     ],
     caseStudy: "canon",
