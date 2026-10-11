@@ -7,7 +7,7 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import type { Layer } from "./data";
+import { chronologicalOrder, type Layer } from "./data";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type Props = {
@@ -49,12 +49,22 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
   const layer = index >= 0 ? layers[index] : null;
   const total = layers.length;
 
+  // Previous/next follow the order the work was done (see chronologicalOrder
+  // in data.ts). Any card missing from that list goes at the end, so a new
+  // card never breaks navigation.
+  const sequence = [
+    ...chronologicalOrder.filter((id) => layers.some((l) => l.id === id)),
+    ...layers.map((l) => l.id).filter((id) => !chronologicalOrder.includes(id)),
+  ];
+  const position = activeId ? sequence.indexOf(activeId) : -1;
+  const stepId = (delta: number) =>
+    sequence[(position + delta + sequence.length) % sequence.length];
+
   const goTo = (delta: number) => {
-    if (index < 0) return;
-    const n = (index + delta + total) % total;
+    if (position < 0) return;
     setUsedOrigin(true);
     setTilt({ rx: 0, ry: 0 });
-    onChange(layers[n].id);
+    onChange(stepId(delta));
   };
   const goPrev = () => goTo(-1);
   const goNext = () => goTo(1);
@@ -131,8 +141,8 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
       : { x: 0, y: 30, scale: 0.98, opacity: 0 };
 
   const accent = layer ? layer.accent : "#ffffff";
-  const prev = layers[(index - 1 + total) % total] ?? layers[0];
-  const next = layers[(index + 1) % total] ?? layers[0];
+  const prev = layers.find((l) => l.id === stepId(-1)) ?? layers[0];
+  const next = layers.find((l) => l.id === stepId(1)) ?? layers[0];
   const isLede = !!layer && layer.paragraphs.length > 1;
 
   const onMove = (e: ReactMouseEvent) => {
