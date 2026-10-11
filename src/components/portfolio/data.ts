@@ -231,3 +231,23 @@ export const layers: Layer[] = [
     variant: "film",
   },
 ];
+
+// Order used by the previous/next controls in the card overlay. Each card's
+// "next" is the work done after it. It wraps around: after Agora (the newest
+// work) comes the intro card ("What's next?"), and after the intro comes the
+// earliest work. The deck itself keeps the order of `layers`.
+export const chronologicalOrder: string[] = [
+  "wake",
+  "dark",
+  "ok",
+  "ey-automations",
+  "ey-compliance",
+  "ey-change",
+  "reentry",
+  "pogoh",
+  "mool",
+  "lalama",
+  "canon",
+  "ai-facilitation",
+  "intro",
+];
