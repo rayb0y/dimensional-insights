@@ -152,7 +152,7 @@ export const layers: Layer[] = [
     eyebrow: "EY Global Delivery Services  ·  Reform  ·  PowerApps + SQL",
     title: "Deciding what the change system should be",
     paragraphs: [
-      "Reform began as an open brief: track change across every business function and move the organisation toward more self-directed ways of working. My work started before the build, deciding what the tool needed to be and where it should stop, and that framing drove the product decisions. Editable columns gave teams Excel-style bulk editing. A detailed record view supported careful single-record changes. Full-database search, which PowerApps does not offer out of the box, made the whole record findable. I designed it end to end. Names and designs shown here are changed; the work is proprietary.",
+      "Reform began as an open brief: track change across every business function and move the organisation toward more self-directed ways of working. My work started before the build, deciding what the tool needed to be and where it should stop, and that framing drove the product decisions. Editable columns gave teams Excel-style bulk editing. A detailed record view supported careful single-record changes. These decisions were taken to make sure that teams using the tool could use their own established mental models and workflows while interacting with the new technology. Names and designs shown here are changed; the work is proprietary.",
     ],
     tags: [
       "Product Strategy",
