@@ -595,6 +595,267 @@ canon: {
       ]
     }
   ],
+  "next": "reentry"
+},
+"reentry": {
+  "slug": "reentry",
+  "accent": "#38b6ff",
+  "cardId": "reentry",
+  "eyebrow": "Case study  ·  CMU User Experience Research Methods  ·  Aug–Oct 2025",
+  "title": "The part of travel no product designs for",
+  "summary": "A road trip ends at the front door, and the hard part starts there. I ran a multi-method study on the transition home after a road trip, the Re-entry Rift, and turned it into three insights, a journey map of the first two days back, and two product opportunities.",
+  "meta": [
+    {
+      "label": "Role",
+      "value": "Lead researcher"
+    },
+    {
+      "label": "Course",
+      "value": "User Experience Research Methods, CMU"
+    },
+    {
+      "label": "Instructor",
+      "value": "Francine Gemperle"
+    },
+    {
+      "label": "Timeline",
+      "value": "August to October 2025"
+    },
+    {
+      "label": "Methods",
+      "value": "Domain survey, literature review, roleplay, online survey, interviews, co-design"
+    },
+    {
+      "label": "Output",
+      "value": "3 insights, a journey map, 2 product opportunity areas"
+    }
+  ],
+  "links": [],
+  "hero": {
+    "type": "figure",
+    "todo": "Hero image for the Re-entry Rift study.",
+    "alt": ""
+  },
+  "sections": [
+    {
+      "id": "problem",
+      "heading": "The problem",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "The course theme was taking a road trip. However enjoyable the trip, coming home opens a gap that nobody manages. Travelers describe post-trip blues, made worse by fatigue, the shock of an abrupt transition, and frustration at chores they left for themselves. All of it wears down how good the trip felt."
+        },
+        {
+          "type": "p",
+          "text": "A domain survey showed the travel industry has nothing for this moment. The major travel apps compete on planning and booking. None of them supports the return. The literature agreed on what is at stake: the well-being benefits of travel decay quickly once stress and exhaustion return with work."
+        },
+        {
+          "type": "figure",
+          "todo": "Image for the problem section.",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": "origin",
+      "heading": "Where it started",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "The research began broadly and was focused by one moment during roleplay. Driving back through the Fort Pitt Tunnel, Pittsburgh suddenly appears, and the open road turns into city reality. That abrupt shift became the name of the problem: the Re-entry Rift."
+        },
+        {
+          "type": "figure",
+          "todo": "Image for the origin section.",
+          "alt": ""
+        },
+        {
+          "type": "p",
+          "text": "My own road trip to Cooper's Rock showed the same contrast. The last hour of the drive was relaxed, and arriving at a messy home ended that immediately. The friction at the door amplified the stress of coming back."
+        },
+        {
+          "type": "callout",
+          "text": "Hypothesis: the emotional and cognitive load travelers feel on returning home comes from the abrupt, unmanaged shift from the high-autonomy state of travel to the high-demand state of routine."
+        }
+      ]
+    },
+    {
+      "id": "testing",
+      "heading": "Testing the hypothesis",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "I tested the hypothesis with travelers in three stages, each with its own job."
+        },
+        {
+          "type": "stats",
+          "items": [
+            {
+              "value": "29",
+              "label": "survey responses, ages 25 to 55, with varied work and family routines"
+            },
+            {
+              "value": "6",
+              "label": "in-depth interviews with people who had taken two road trips in the past year"
+            },
+            {
+              "value": "4",
+              "label": "custom co-design sheets, used with interviewees and new participants"
+            }
+          ]
+        },
+        {
+          "type": "steps",
+          "items": [
+            {
+              "label": "Stage 1",
+              "title": "Online survey",
+              "text": "Confirmed that the Re-entry Rift and its symptoms, such as stress, fatigue and distraction, show up at a broader scale, and recruited people for interviews."
+            },
+            {
+              "label": "Stage 2",
+              "title": "Interviews",
+              "text": "Six in-depth conversations to get to insights and possible user needs."
+            },
+            {
+              "label": "Stage 3",
+              "title": "Co-design",
+              "text": "Four custom sheets moved participants away from describing their experience in words. They drew it, mapped their schedules, and rated things like lost productivity."
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "text": "The co-design showed that the final hour of the drive is critical, and that people depend on their co-travelers to cope with it. The schedule mapping confirmed that thinking about the trip and finishing leftover housework both disrupt focus once people are home."
+        },
+        {
+          "type": "figure",
+          "todo": "Image for the testing section.",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": "synthesis",
+      "heading": "Making sense of it",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Three synthesis tools shaped the findings. A concept map, built with my team, showed how stimulating and decision-heavy a road trip is, which is where the fatigue comes from. A stakeholder map showed the web of family and work demands waiting at home. Affinity mapping clustered raw statements from the interviews into insights."
+        },
+        {
+          "type": "gallery",
+          "images": [],
+          "todo": "Image gallery for the synthesis section: concept map, stakeholder map, affinity clusters."
+        }
+      ]
+    },
+    {
+      "id": "findings",
+      "heading": "What I found",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Two friction points define the end of the journey: bracing for impact, and an emotional re-entry that takes longer than the trip home."
+        },
+        {
+          "type": "cards",
+          "items": [
+            {
+              "title": "Travelers want the trip to end",
+              "text": "However good the trip was, people get tired in the last hour as the end sets in. They start picturing their beds."
+            },
+            {
+              "title": "They brace for impact",
+              "text": "People use personal rituals to cope with the return to normal life."
+            },
+            {
+              "title": "Emotional re-entry is slow",
+              "text": "It starts in the last part of the drive home and lasts one to two days after arrival."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": "We always have a 'last supper' kind of meal, like a tradition to mark the end.",
+          "cite": "Interview participant"
+        },
+        {
+          "type": "quote",
+          "text": "I just lie down and scroll through photos. I'm home, but my head is still on vacation.",
+          "cite": "Interview participant"
+        }
+      ]
+    },
+    {
+      "id": "journey",
+      "heading": "The journey home",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "I brought the survey, interviews and co-design together in a journey map that runs from the last hour of the drive to the second day home. It shows emotion falling at the end of the trip and the attempt to recover afterwards."
+        },
+        {
+          "type": "figure",
+          "todo": "The journey map image.",
+          "alt": ""
+        },
+        {
+          "type": "steps",
+          "items": [
+            {
+              "label": "The final drive",
+              "title": "Close the trip together",
+              "text": "The driver is focused on getting home and the back seat falls asleep. Constant decisions have worn out everyone's energy, and the social experience has no formal end."
+            },
+            {
+              "label": "The first hour home",
+              "title": "Get comfortable",
+              "text": "People sleep, shower and order food, and feel relieved that nothing is being asked of them. A messy home or immediate chores can ruin this."
+            },
+            {
+              "label": "The next one to two days",
+              "title": "Get back to routine",
+              "text": "People clean up, get annoyed at their past selves for the mess, and force their focus back onto work or school while trip memories keep interrupting."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "opportunity",
+      "heading": "Where a product could help",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Travelers need a formalized way to brace for impact, which will help during the protracted emotional re-entry."
+        },
+        {
+          "type": "cards",
+          "items": [
+            {
+              "title": "1. Formalized pre-entry rituals",
+              "text": "One last shared activity before the trip is over. Social deceleration: an intentional, shared moment that gives every traveler closure before they separate. Memory bridging: connects the relaxed memory of the trip to the return to routine, instead of focusing on anxiety."
+            },
+            {
+              "title": "2. A guided re-entry",
+              "text": "Reminders at set intervals that give travelers room to catch up to work and routine. Structured deceleration: breathing room built into the first 48 hours home. Productivity shield: a planned outlet for trip memories so they stop interrupting work. Behavior nudging: gentle, contextual reminders back into established routines."
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "text": "The reframe is the useful part. Travel products treat the trip as the product and stop at the door. This study treats the return as a deceleration problem, with its own goals, rituals and pain points, and a clear place for design to help."
+        },
+        {
+          "type": "doc",
+          "kind": "PDF",
+          "title": "Read the full report",
+          "todo": "Upload the full study report PDF to public/case-studies/reentry/, then set href. Remove this block instead if the report stays private."
+        }
+      ]
+    }
+  ],
   "next": "agora"
 },
 };
