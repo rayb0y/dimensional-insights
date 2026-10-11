@@ -165,7 +165,7 @@ function BlockView({ block, accent }: { block: Block; accent: string }) {
 
     case "cards":
       return (
-        <div className={block.items.length === 4 ? "cs-cards cs-cards-2" : "cs-cards"}>
+        <div className={block.items.length === 4 || block.items.length === 2 ? "cs-cards cs-cards-2" : "cs-cards"}>
           {block.items.map((c) => (
             <div key={c.title} style={{ border: `1px solid ${LINE}`, padding: "20px 20px 22px" }}>
               <div

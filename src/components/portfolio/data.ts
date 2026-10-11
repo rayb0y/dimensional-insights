@@ -143,6 +143,7 @@ export const layers: Layer[] = [
       "I ran a multi-method study on that gap: literature review, roleplay and observation on my own road trip, a survey of 29 travelers aged 25 to 55, six in-depth interviews, and a co-design activity built on four custom sheets that got people drawing their experience instead of describing it. Affinity mapping turned the raw material into three insights. Travelers want the trip to end. They brace for impact with private rituals. Emotional re-entry runs one to two days past the front door, interrupting work with memories that will not wait their turn.",
       "I mapped those into a journey covering the final hour of the drive through the second day home, then defined two product opportunity areas: a formalized way to close the trip socially before everyone separates, and a guided re-entry that gives the first 48 hours room to breathe. The reframe is the useful part. This is not a trip-planning problem. It is a deceleration problem.",
     ],
+    caseStudy: "reentry",
     tags: ["UX Research", "Multi-method", "Qualitative", "Co-design", "Journey Mapping"],
   },
   {
