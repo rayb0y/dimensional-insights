@@ -9,6 +9,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { layers, type Layer } from "./data";
+import { ResumeButton } from "./ResumeButton";
 
 type Props = {
   onOpen?: (id: string, rect?: DOMRect) => void;
@@ -492,6 +493,7 @@ export function MobileStack(_props: Props) {
             >
               LinkedIn
             </a>
+            <ResumeButton style={{ ...linkStyle, marginTop: 0 }} />
           </div>
         )}
 

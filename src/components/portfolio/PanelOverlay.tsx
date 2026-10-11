@@ -9,6 +9,7 @@ import {
 import { Link, useNavigate } from "@tanstack/react-router";
 import { chronologicalOrder, type Layer } from "./data";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ResumeButton } from "./ResumeButton";
 
 type Props = {
   layers: Layer[];
@@ -493,6 +494,7 @@ export function PanelOverlay({ layers, activeId, originRect, onClose, onChange }
                       >
                         LinkedIn
                       </a>
+                      <ResumeButton style={linkBtn} />
                     </div>
                   )}
                 </div>
