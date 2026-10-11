@@ -1,8 +1,9 @@
-import { useState, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import resumeAsset from "@/assets/resume.pdf.asset.json";
 
 // The file itself lives in the app's storage; the pointer JSON below carries its
-// URL. Filename controls what the downloaded file is called.
+// URL. A plain anchor with the download attribute is the most reliable way to
+// save the file: no script, no popup blockers, works everywhere.
 const FILENAME = "Amal Ray - Resume.pdf";
 
 type Props = {
@@ -10,34 +11,9 @@ type Props = {
 };
 
 export function ResumeButton({ style }: Props) {
-  const [busy, setBusy] = useState(false);
-
-  const download = async () => {
-    setBusy(true);
-    try {
-      // Fetch then save so the browser downloads the file instead of opening
-      // it in a tab, and saves it under the name above.
-      const res = await fetch(resumeAsset.url);
-      if (!res.ok) throw new Error(`resume request failed: ${res.status}`);
-      const href = URL.createObjectURL(await res.blob());
-      const a = document.createElement("a");
-      a.href = href;
-      a.download = FILENAME;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.setTimeout(() => URL.revokeObjectURL(href), 10000);
-    } catch {
-      // If saving is blocked (private mode, blocked popups), just open it.
-      window.open(resumeAsset.url, "_blank", "noopener,noreferrer");
-    } finally {
-      setBusy(false);
-    }
-  };
-
   return (
-    <button type="button" onClick={download} disabled={busy} style={style}>
-      {busy ? "Preparing" : "Download Resume ↓"}
-    </button>
+    <a href={resumeAsset.url} download={FILENAME} style={style}>
+      Download Resume ↓
+    </a>
   );
 }
